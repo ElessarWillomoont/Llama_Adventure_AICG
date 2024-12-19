@@ -50,3 +50,8 @@ frontend/next-env.d.ts
 *.dockerignore
 .vscode/
 backend/*.log
+
+#for debug
+
+project_structure.txt
+tree.py
