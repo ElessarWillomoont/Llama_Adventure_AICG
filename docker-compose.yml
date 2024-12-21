@@ -4,8 +4,13 @@ services:
     ports:
       - "5000:5000"
     volumes:
-      - ./backend/db:/app/db  # 仅挂载 ./backend/db 文件夹到容器
+      - ./backend/db:/app/db  # Mounting the ./backend/db folder into the container
+    runtime: nvidia  # Use the NVIDIA runtime to access GPUs
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all  # Makes all available GPUs visible to this container
+
   frontend:
     build: ./frontend
     ports:
       - "3000:3000"
+    # No need to specify GPU access for frontend unless needed

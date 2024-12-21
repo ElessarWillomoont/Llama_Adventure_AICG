@@ -1,16 +1,18 @@
 services:
   backend:
-    build: ./backend  # 添加 build 配置
+    build: ./backend  # Build configuration for backend
     ports:
       - "5000:5000"
     volumes:
       - ./backend:/app
     environment:
       GAME_IS_IN_DEV_MODE: "true"
+      NVIDIA_VISIBLE_DEVICES: "all"  # Makes all available GPUs visible to the backend container
     command: tail -f /dev/null
+    runtime: nvidia  # Use the NVIDIA runtime to access GPUs
 
   frontend:
-    build: ./frontend  # 添加 build 配置
+    build: ./frontend  # Build configuration for frontend
     ports:
       - "3000:3000"
     volumes:
@@ -18,3 +20,4 @@ services:
     environment:
       GAME_IS_IN_DEV_MODE: "true"
     command: tail -f /dev/null
+    # No need to specify GPU for frontend unless you need it

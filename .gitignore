@@ -1,6 +1,7 @@
 #for backend
 
 backend/venv
+backend/__pycache__
 
 #from next
 
