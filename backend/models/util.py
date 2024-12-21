@@ -1,6 +1,5 @@
 import os
 import yaml
-from game_model import ChatModel
 
 # Utility functions to handle YAML-based dialogue history
 
@@ -83,53 +82,7 @@ def write_conversation(dialogue_name, content, index=None):
     with open(file_path, 'w') as file:
         yaml.dump(history, file)
 
-# Model management and interaction
-models_cache = {}
 
-def load_model(model_name):
-    """
-    Load a ChatModel into memory and cache it.
-
-    :param model_name: Name of the model to load.
-    :return: The loaded ChatModel instance.
-    """
-    if model_name not in models_cache:
-        print(f"Loading model: {model_name}")
-        chat_model = ChatModel()
-        chat_model.load_model(model_name)  # Ensure the model is loaded
-        models_cache[model_name] = chat_model
-    else:
-        print(f"Model {model_name} is already loaded.")
-    return models_cache[model_name]
-
-def unload_model(model_name):
-    """
-    Unload a ChatModel from memory to free resources.
-
-    :param model_name: Name of the model to unload.
-    """
-    if model_name in models_cache:
-        print(f"Unloading model: {model_name}")
-        models_cache[model_name].unload_model()  # Unload using the `ChatModel` method
-        del models_cache[model_name]
-    else:
-        print(f"Model {model_name} is not loaded.")
-
-def interact_with_model(model_name, input_text):
-    """
-    Interact with a loaded ChatModel by providing input and retrieving output.
-
-    :param model_name: Name of the loaded model.
-    :param input_text: Input text to send to the model.
-    :return: Model's response.
-    """
-    if model_name not in models_cache:
-        raise ValueError(f"Model {model_name} is not loaded. Please load it first.")
-
-    model = models_cache[model_name]
-    return model.chat_with_manual_inference(input_text)
-
-# Testing and Initialization Example
 if __name__ == "__main__":
     dialogue_name = "test_conversation"
 
@@ -154,18 +107,3 @@ if __name__ == "__main__":
 
     print("Reading all conversation again...")
     print(read_conversation(dialogue_name))
-
-    # Test model loading, interaction, and unloading
-    model_name = input("Enter model name (e.g., 'microsoft/Phi-3.5-mini-instruct'):\n")
-    chat_model = load_model(model_name)  # Correct way to load the model
-
-    context = input("Type to start interaction:\n")
-    while context.strip().lower() != "exit":
-        print("Interacting with model...")
-        response = interact_with_model(model_name, context)
-        print("Model response:", response)
-        write_conversation(dialogue_name, {"user": context, "assistant": response})
-        context = input("Enter next message or type 'exit' to unload the model:\n")
-
-    # Unload model
-    unload_model(model_name)  # Unload the model correctly
