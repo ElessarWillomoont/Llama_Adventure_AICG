@@ -3,6 +3,8 @@ services:
     build: ./backend
     ports:
       - "5000:5000"
+    volumes:
+      - ./backend/db:/app/db  # 仅挂载 ./backend/db 文件夹到容器
   frontend:
     build: ./frontend
     ports:
