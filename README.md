@@ -92,6 +92,8 @@ The use of Docker, despite the inclusion of large images, is aimed at maximizing
 
 2. **High Compatibility:** While ONNX Runtime offers high efficiency and compatibility across various devices, it requires a higher learning curve. llama.cpp, though efficient, involves manual compilation, making it less beginner-friendly—especially for users who prefer a straightforward "download-and-run" approach.
 
+3. **Updated Libraries:** The ONNX Runtime `onnxruntime-genai` library was recently updated, and many tutorials have yet to synchronize with the changes, leading to issues where examples currently fail to run. Given the lack of time to debug or wait for updated guides, Transformers were chosen to rapidly develop a minimal viable prototype.
+
 ### Why not quantize the model despite its high memory requirements (16GB+ VRAM)?
 
 Quantization in Transformers is not as straightforward as in the original PyTorch framework. Although efforts are underway to address this, switching to a different technology stack requires additional development time. This task is included in the project's to-do list for future improvements.
