@@ -1,2 +1,3 @@
 ﻿backend_url: "http://localhost:5000"
 api_key: "my-secret-key"
+max_context_size: 262144 #in len{overall string}

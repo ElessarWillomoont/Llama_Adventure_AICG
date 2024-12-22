@@ -90,6 +90,10 @@ export default function Button_Send({ value, onClear }: ButtonSendProps) {
     setModelLoading,
     modelGenerating,
     dialogueName,
+    systemMessageCoStar,
+    setSystemMessageCoStar,
+    gameStatus,
+    setGameStatus,
   } = useGlobalState();
 
   const [config, setConfig] = useState<{ backend_url: string; api_key: string } | null>(null);

@@ -2,32 +2,6 @@
 
 import React, { createContext, useContext, useState, ReactNode } from "react";
 
-// Define the type for game status
-interface PlayerStatus {
-  type: string;
-  name: string;
-  state: string;
-  money: number;
-  health: number;
-  stamina: number;
-}
-
-interface WorldStatus {
-  type: string;
-  state: string;
-}
-
-interface LocationStatus {
-  type: string;
-  state: string;
-}
-
-interface GameStatus {
-  player: PlayerStatus;
-  world: WorldStatus;
-  shelter: LocationStatus;
-}
-
 // Define the type of global state
 interface GlobalStateType {
   /**
@@ -87,17 +61,18 @@ interface GlobalStateType {
   setDialogueName: (value: string) => void;
 
   /**
-   * System message for co-star
+   * System message co-star
    * Default: "You are a helpful assistant."
    */
   systemMessageCoStar: string;
   setSystemMessageCoStar: (value: string) => void;
 
   /**
-   * Game status to store the state of the world and player
+   * Game status representing the world and player state
+   * Default: contains player, world, and shelter initial states
    */
-  gameStatus: GameStatus;
-  setGameStatus: (value: GameStatus) => void;
+  gameStatus: Record<string, any>;
+  setGameStatus: (value: Record<string, any>) => void;
 }
 
 // Create the context
@@ -114,23 +89,23 @@ export const GlobalStateProvider = ({ children }: { children: ReactNode }) => {
   const [modelGenerating, setModelGenerating] = useState<boolean>(false); // Indicates whether a model is generating, default false
   const [dialogueName, setDialogueName] = useState<string>("chating_history"); // Name of the dialogue, default "chating_history"
   const [systemMessageCoStar, setSystemMessageCoStar] = useState<string>("You are a helpful assistant."); // Default system message
-  const [gameStatus, setGameStatus] = useState<GameStatus>({
+  const [gameStatus, setGameStatus] = useState<Record<string, any>>({
     player: {
-      type: "玩家",
+      type: "player",
       name: "Default_Player",
-      state: "一个玩家",
+      state: "A single player",
       money: 0,
       health: 100,
       stamina: 100,
     },
     world: {
-      type: "世界描述",
-      state: "一片世界大战导致的启示录危机后，一片荒无人烟的城市废墟",
+      type: "world_description",
+      state: "A desolate city ruin following an apocalyptic world war."
     },
     shelter: {
-      type: "地点",
-      state: "玩家苏醒的地方",
-    },
+      type: "location",
+      state: "The place where the player awakens."
+    }
   });
 
   return (
