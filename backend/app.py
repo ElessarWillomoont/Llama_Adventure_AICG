@@ -117,7 +117,7 @@ class LoadModelRequest(BaseModel):
     pip_name: str
 
 class ChatRequest(BaseModel):
-    user_input: str
+    messages: list  # List of messages with roles and content
 
 @app.post("/load_model/")
 async def api_load_model(request: LoadModelRequest, api_key: str = Header(...)):
@@ -144,29 +144,51 @@ async def api_unload_model(api_key: str = Header(...)):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to unload model: {str(e)}")
 
+from fastapi import BackgroundTasks
+
+# A placeholder for storing the last chat response (for simplicity)
+last_response = {"status": "processing", "response": None}
+
+def perform_chat_task(messages, generation_args):
+    """Perform the chat generation task in the background."""
+    global model_pipeline, last_response
+    try:
+        output = model_pipeline(messages, **generation_args)
+        last_response["status"] = "completed"
+        last_response["response"] = output[0]["generated_text"]
+    except Exception as e:
+        last_response["status"] = "error"
+        last_response["response"] = str(e)
+
 @app.post("/chat/")
-async def api_chat(request: ChatRequest, api_key: str = Header(...)):
+async def api_chat(request: ChatRequest, background_tasks: BackgroundTasks, api_key: str = Header(...)):
     validate_api_key(api_key)
-    global model_pipeline
+    global model_pipeline, last_response
     if model_pipeline is None:
         raise HTTPException(status_code=400, detail="No model is currently loaded. Please load a model first.")
-    try:
-        max_new_tokens = 1024  # Customize as needed
-        generation_args = {
-            "max_new_tokens": max_new_tokens,
-            "return_full_text": True,
-            "temperature": 0.7,
-            "do_sample": True,
-        }
-        messages = [
-            {"role": "system", "content": "You are a helpful AI assistant."},
-            {"role": "user", "content": request.user_input},
-        ]
-        # Call the pipeline synchronously
-        output = model_pipeline(messages, **generation_args)
-        return {"user_input": request.user_input, "response": output[0]["generated_text"]}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error generating response: {str(e)}")
+
+    # Reset the last response state
+    last_response["status"] = "processing"
+    last_response["response"] = None
+
+    # Prepare the input messages and generation arguments
+    max_new_tokens = 1024  # Customize as needed
+    generation_args = {
+        "max_new_tokens": max_new_tokens,
+        "return_full_text": True,
+        "temperature": 0.7,
+        "do_sample": True,
+    }
+
+    # Add the task to the background queue
+    background_tasks.add_task(perform_chat_task, request.messages, generation_args)
+
+    return {"message": "Chat generation started in the background."}
+
+@app.get("/chat-status/")
+def chat_status(api_key: str = Header(...)):
+    validate_api_key(api_key)
+    return last_response
 
 @app.get("/heartbeat")
 def heartbeat(api_key: str = Header(...)):
