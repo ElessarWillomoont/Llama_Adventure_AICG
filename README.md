@@ -90,7 +90,7 @@ The frontend continuously monitors the backend's `heartbeat` API. If communicati
 
 In debug mode, this component becomes clickable. When clicked, the component turns yellow and stops sending requests to the backend, while updating the corresponding global variable. This allows developers to pause frequent API requests and debug issues between the frontend and backend more effectively.
 
-### Button_Send
+### Button\_Send
 
 #### Functionality:
 
@@ -148,3 +148,17 @@ Quantization in Transformers is not as straightforward as in the original PyTorc
 1. Explore adopting ONNX Runtime for enhanced efficiency.
 2. Implement necessary model quantization to enable accessibility on a wider range of devices.
 
+## Road Map
+
+1. Create a frontend-backend structure capable of communication (**Completed**)
+2. Develop a test API in the backend and a sample webpage in the frontend (**Completed**)
+3. Import the model into the backend and attempt to use it there (**Completed**)
+4. Generate outputs using the model in the backend (**Completed**)
+5. Develop additional functions in the backend (saving and reading history, checking status) (**Completed**)
+6. Package backend functions and features into APIs (**Completed**)
+7. Create initialization buttons and interaction logic in the frontend for communication (**Completed**)
+8. Develop a frontend-backend structure capable of single-turn dialogue (**Completed**)
+9. Enhance to support multi-turn dialogues with context-awareness (**Completed**)
+10. Add game logic and character state storage (**Not Completed**)
+11. Enable game-character-based dialogue by generating context for the model (**Not Completed**)
+12. Add more NPC characters (**Not Completed**)
