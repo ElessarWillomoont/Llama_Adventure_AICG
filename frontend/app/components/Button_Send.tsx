@@ -17,13 +17,13 @@ export default function Button_Send({ value, onClear }: ButtonSendProps) {
       style={{
         position: "absolute",
         bottom: "5%",
-        right: "2%",
-        width: "5%", // 宽度为父容器的 5%
-        height: "40px",
+        right: "1%",
+        width: "8%", // 宽度为父容器的 5%
+        height: "50px",
         backgroundColor: "#4CAF50",
         color: "white",
         border: "none",
-        borderRadius: "20px", // 半圆角
+        borderRadius: "25px", // 半圆角
         fontSize: "14px",
         cursor: "pointer",
         textAlign: "center",

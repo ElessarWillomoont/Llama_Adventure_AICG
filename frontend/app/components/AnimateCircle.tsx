@@ -5,7 +5,20 @@ import yaml from "js-yaml";
 import { useGlobalState } from "../contexts/GlobalStateContext";
 
 export default function AnimatedCircle() {
-  const { isConnected, setIsConnected, isConnectLose, setIsConnectLose, isInDevMode } = useGlobalState();
+  const {
+    isConnected,
+    setIsConnected,
+    isConnectLose,
+    setIsConnectLose,
+    isInDevMode,
+    modelLoaded,
+    setModelLoaded,
+    modelLoading,
+    setModelLoading,
+    modelGenerating,
+    setModelGenerating,
+  } = useGlobalState();
+
   const [isError, setIsError] = useState<boolean>(false);
 
   const log = (message: string) => {
@@ -22,27 +35,59 @@ export default function AnimatedCircle() {
 
       const { backend_url, api_key } = config;
 
-      const response = await fetch(`${backend_url}/heartbeat`, {
+      // Check heartbeat
+      const heartbeatResponse = await fetch(`${backend_url}/heartbeat`, {
         headers: {
           "Content-Type": "application/json",
           "api-key": api_key,
         },
       });
 
-      if (!response.ok) {
-        throw new Error(`API call failed: ${response.statusText}`);
+      if (!heartbeatResponse.ok) {
+        throw new Error(`Heartbeat API call failed: ${heartbeatResponse.statusText}`);
       }
 
-      const data = await response.json();
+      const heartbeatData = await heartbeatResponse.json();
 
-      if (data.status === "alive") {
+      if (heartbeatData.status === "alive") {
         log("Backend is running.");
         setIsConnected(true);
-        setIsConnectLose(false); // Communication succeeded
+        setIsConnectLose(false);
         setIsError(false);
       } else {
         throw new Error("Backend status is not alive.");
       }
+
+      // Check model loading status
+      const loadStatusResponse = await fetch(`${backend_url}/load-status/`, {
+        headers: {
+          "Content-Type": "application/json",
+          "api-key": api_key,
+        },
+      });
+
+      if (!loadStatusResponse.ok) {
+        throw new Error(`Load Status API call failed: ${loadStatusResponse.statusText}`);
+      }
+
+      const loadStatusData = await loadStatusResponse.json();
+      setModelLoading(loadStatusData.loading_model);
+      
+
+      // Check chat generation status
+      const chatGenStatusResponse = await fetch(`${backend_url}/chat-generation-status/`, {
+        headers: {
+          "Content-Type": "application/json",
+          "api-key": api_key,
+        },
+      });
+
+      if (!chatGenStatusResponse.ok) {
+        throw new Error(`Chat Generation Status API call failed: ${chatGenStatusResponse.statusText}`);
+      }
+
+      const chatGenStatusData = await chatGenStatusResponse.json();
+      setModelGenerating(chatGenStatusData.chat_generating);
     } catch (err) {
       if (err instanceof Error) {
         log(`Error: ${err.message}`);
@@ -50,7 +95,7 @@ export default function AnimatedCircle() {
         log("An unknown error occurred.");
       }
       setIsConnected(false);
-      setIsConnectLose(true); // Communication failed
+      setIsConnectLose(true);
       setIsError(true);
     }
   };
@@ -58,7 +103,7 @@ export default function AnimatedCircle() {
   useEffect(() => {
     const interval = setInterval(() => {
       checkHeartbeat();
-    }, 1000); // Check every 1 second
+    }, 100); // Check every 100ms (10 times per second)
 
     return () => clearInterval(interval); // Clean up on component unmount
   }, []);

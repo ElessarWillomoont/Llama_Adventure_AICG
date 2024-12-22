@@ -174,9 +174,12 @@ async def api_chat(request: ChatRequest, background_tasks: BackgroundTasks, api_
 
     return {"message": "Chat generation started in the background."}
 
-@app.get("/chat-status/")
-def chat_status(api_key: str = Header(...)):
+@app.get("/chat-get-response/")
+def chat_get_response(api_key: str = Header(...)):
     validate_api_key(api_key)
+    global last_response
+    if last_response["status"] == "processing":
+        raise HTTPException(status_code=400, detail="Response is still being generated.")
     return last_response
 
 @app.get("/heartbeat")

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useGlobalState } from "../contexts/GlobalStateContext";
 import InputBox from "../components/InputBox";
 import Button_Send from "../components/Button_Send";
+import Button_LoadModel from "../components/Button_LoadModel"
 
 export default function ChatInterface() {
   const { isConnected, isConnectLose } = useGlobalState();
@@ -47,6 +48,7 @@ export default function ChatInterface() {
       </div>
       <Button_Send value={inputValue} onClear={handleClear} />
       <InputBox value={inputValue} onChange={setInputValue} />
+      <Button_LoadModel />
     </div>
   );
 }

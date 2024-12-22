@@ -190,7 +190,7 @@ Loads the specified model.
 - **Expected Response:**
   ```json
   {
-      "message": "Model 'microsoft/Phi-3.5-mini-instruct' loaded successfully."
+      "message": "Model loading started in the background."
   }
   ```
 
@@ -263,34 +263,27 @@ Starts a chat process in the background with the provided messages.
 
 ---
 
-## **9. Chat Status**
+## **9. Chat Get Response**
 
 **Endpoint:**
 ```
-GET /chat-status/
+GET /chat-get-response/
 ```
 
 **Description:**
-Checks the status of the last chat request.
+Fetches the response from the last chat request once it is completed.
 
 **Headers:**
 - `api_key`: Your API key.
 
 **Postman Test Example:**
 - **Method:** `GET`
-- **URL:** `http://127.0.0.1:5000/chat-status/`
+- **URL:** `http://127.0.0.1:5000/chat-get-response/`
 - **Headers:**
   ```
   api_key: my-secret-key
   ```
 - **Expected Responses:**
-  - **Processing:**
-    ```json
-    {
-        "status": "processing",
-        "response": null
-    }
-    ```
   - **Completed:**
     ```json
     {
