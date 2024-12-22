@@ -6,6 +6,7 @@ import InputBox from "../components/InputBox";
 import Button_Send from "../components/Button_Send";
 import Button_LoadModel from "../components/Button_LoadModel"
 import UnstallModule from "../components/UnstallModule"
+import DialogueBoard from "../components/DialogueBoard"
 
 export default function ChatInterface() {
   const { isConnected, isConnectLose } = useGlobalState();
@@ -51,6 +52,7 @@ export default function ChatInterface() {
       <InputBox value={inputValue} onChange={setInputValue} />
       <Button_LoadModel />
       <UnstallModule />
+      <DialogueBoard />
     </div>
   );
 }

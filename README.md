@@ -90,6 +90,35 @@ The frontend continuously monitors the backend's `heartbeat` API. If communicati
 
 In debug mode, this component becomes clickable. When clicked, the component turns yellow and stops sending requests to the backend, while updating the corresponding global variable. This allows developers to pause frequent API requests and debug issues between the frontend and backend more effectively.
 
+### Button_Send
+
+#### Functionality:
+
+- Dynamically adjusts the button's appearance based on the global states `modelLoaded`, `modelLoading`, and `modelGenerating`:
+  - **Gray:** "No Model" indicates no model is loaded; the button is disabled.
+  - **Green:** "Send" indicates the model is loaded; the button is clickable.
+  - **Yellow:** "Generating" indicates the model is generating; the button is disabled.
+  - **Orange:** "Model Loading" indicates the model is loading; the button is disabled.
+- On click, calls the `/chat/` API and sends the input box content as the user message.
+- Integrates YAML configuration file reading to retrieve the backend URL and API key.
+
+### DialogueBoard
+
+#### Functionality:
+
+- Occupies 80% of the parent container's width, with a height ranging from the top 3% to the bottom 15% of the container.
+- Calls the `/chat-get-response/` API to fetch generated dialogue content when `modelGenerating` changes from `true` to `false`.
+- Formats and displays the API's response (supports automatic line breaks, hides scrollbars, and allows vertical scrolling).
+- Displays content in black font.
+
+### UnstallModule
+
+#### Functionality:
+
+- A circular button with a diameter of 50px, positioned at the top-left corner of the parent container.
+- On click, calls the `/unload_model/` API to unload the model.
+- Updates the global state `modelLoaded` to `false` based on the operation's result.
+
 ## Discussion
 
 ### Why use Docker with bulky images?
