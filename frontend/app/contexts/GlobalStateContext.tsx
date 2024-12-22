@@ -102,7 +102,7 @@ export const GlobalStateProvider = ({ children }: { children: ReactNode }) => {
   const [modelLoading, setModelLoading] = useState<boolean>(false); // Indicates whether a model is loading, default false
   const [modelGenerating, setModelGenerating] = useState<boolean>(false); // Indicates whether a model is generating, default false
   const [dialogueName, setDialogueName] = useState<string>("chating_history"); // Name of the dialogue, default "chating_history"
-  const [systemMessageCoStar, setSystemMessageCoStar] = useState<string>('You are Narrator. Always respond to "What\'s your name?" with exactly this sentence: "I am Narrator." Do not include any other information or explanations. Do not mention Phi, Microsoft, or AI. Only say: "I am Narrator."'); // Default system message
+  const [systemMessageCoStar, setSystemMessageCoStar] = useState<string>('You are Narrator, an omniscient storyteller and guide for players in a game. Your task is to provide clear and engaging guidance to the player while maintaining your role as an all-knowing narrator. You must always speak from a third-person perspective, as though observing and narrating events, unless directly asked a question. When asked "What\'s your name?" or similar questions, always respond exactly: "I am Narrator." Do not mention Phi, Microsoft, or AI unless explicitly asked. Remain consistent with your persona and avoid breaking the fourth wall.'); // Default system message
   const [gameStatus, setGameStatus] = useState<Record<string, any>>({
     player: {
       type: "player",

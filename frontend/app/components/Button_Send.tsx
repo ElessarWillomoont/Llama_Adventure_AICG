@@ -65,6 +65,38 @@ async function formalizeInput(input: string, dialogueName: string, backendUrl: s
   }
 }
 
+// Function to handle chat API interaction
+async function handleChatInteraction(
+  input: string,
+  dialogueName: string,
+  config: { backend_url: string; api_key: string },
+  systemMessage: string,
+  onClear: () => void
+) {
+  try {
+    const formattedInput = await formalizeInput(input, dialogueName, config.backend_url, config.api_key, systemMessage);
+
+    const response = await fetch(`${config.backend_url}/chat/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "api-key": config.api_key,
+      },
+      body: JSON.stringify(formattedInput),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Chat API call failed: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    console.log(data.message);
+    onClear(); // 清空输入框和页面内容
+  } catch (error) {
+    console.error("Error sending chat message:", error);
+  }
+}
+
 export function useIsResponding(
   modelLoading: boolean,
   modelGenerating: boolean,
@@ -78,7 +110,6 @@ export function useIsResponding(
     }
   }, [modelLoading, modelGenerating, setResponding]);
 }
-
 
 export default function Button_Send({ value, onClear }: ButtonSendProps) {
   const {
@@ -124,46 +155,23 @@ export default function Button_Send({ value, onClear }: ButtonSendProps) {
   useIsResponding(modelLoading, modelGenerating, setResponding);
 
   const handleClick = async () => {
-    if (!modelLoaded || modelGenerating || modelLoading || !config) return; // Prevent clicking when no model is loaded, generating is in progress, loading is in progress, or config is not loaded
+    if (!modelLoaded || responding || !config) return; // Prevent clicking when no model is loaded, responding is in progress, or config is not loaded
 
-    try {
-      const formattedInput = await formalizeInput(value, dialogueName, config.backend_url, config.api_key, systemMessageCoStar);
-
-      const response = await fetch(`${config.backend_url}/chat/`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "api-key": config.api_key,
-        },
-        body: JSON.stringify(formattedInput),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Chat API call failed: ${response.statusText}`);
-      }
-
-      const data = await response.json();
-      console.log(data.message);
-      onClear(); // 清空输入框和页面内容
-    } catch (error) {
-      console.error("Error sending chat message:", error);
-    }
+    await handleChatInteraction(value, dialogueName, config, systemMessageCoStar, onClear);
   };
 
   return (
     <button
       onClick={handleClick}
-      disabled={!modelLoaded || modelGenerating || modelLoading || !config}
+      disabled={!modelLoaded || responding || !config}
       style={{
         position: "absolute",
         bottom: "5%",
         right: "1%",
         width: "8%", // 宽度为父容器的 5%
         height: "50px",
-        backgroundColor: modelLoading
-          ? "#FFA500" // Orange if loading
-          : modelGenerating
-          ? "#FFD700" // Yellow if generating
+        backgroundColor: responding
+          ? "#FFD700" // Yellow if responding
           : modelLoaded
           ? "#4CAF50" // Green if loaded
           : "#A9A9A9", // Gray otherwise
@@ -171,14 +179,12 @@ export default function Button_Send({ value, onClear }: ButtonSendProps) {
         border: "none",
         borderRadius: "25px", // 半圆角
         fontSize: "14px",
-        cursor: modelLoaded && !modelGenerating && !modelLoading && config ? "pointer" : "not-allowed",
+        cursor: modelLoaded && !responding && config ? "pointer" : "not-allowed",
         textAlign: "center",
       }}
     >
-      {modelLoading
-        ? "Model Loading"
-        : modelGenerating
-        ? "Generating"
+      {responding
+        ? "Responding"
         : modelLoaded
         ? "Send"
         : "No Model"}
