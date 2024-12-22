@@ -20,6 +20,8 @@ export default function AnimatedCircle() {
   } = useGlobalState();
 
   const [isError, setIsError] = useState<boolean>(false);
+  const [isPaused, setIsPaused] = useState<boolean>(false);
+  let intervalId: NodeJS.Timeout | null = null;
 
   const log = (message: string) => {
     if (isInDevMode) {
@@ -72,7 +74,6 @@ export default function AnimatedCircle() {
 
       const loadStatusData = await loadStatusResponse.json();
       setModelLoading(loadStatusData.loading_model);
-      
 
       // Check chat generation status
       const chatGenStatusResponse = await fetch(`${backend_url}/chat-generation-status/`, {
@@ -101,17 +102,28 @@ export default function AnimatedCircle() {
   };
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      checkHeartbeat();
-    }, 100); // Check every 100ms (10 times per second)
+    if (!isPaused) {
+      intervalId = setInterval(() => {
+        checkHeartbeat();
+      }, 100); // Check every 100ms (10 times per second)
+    }
 
-    return () => clearInterval(interval); // Clean up on component unmount
-  }, []);
+    return () => {
+      if (intervalId) clearInterval(intervalId);
+    }; // Clean up on component unmount or pause
+  }, [isPaused]);
+
+  const handlePauseToggle = () => {
+    if (isInDevMode) {
+      setIsPaused((prev) => !prev);
+    }
+  };
 
   if (!isConnected && !isError) return null; // Render nothing if not connected and no error
 
   return (
     <div
+      onClick={handlePauseToggle}
       style={{
         position: "fixed",
         top: "10px",
@@ -119,10 +131,15 @@ export default function AnimatedCircle() {
         width: "50px",
         height: "50px",
         borderRadius: "50%",
-        border: `5px solid ${isError ? "#E11D48" : "#4F46E5"}`, // Red on error, blue otherwise
-        borderTop: `5px solid ${isError ? "#F87171" : "transparent"}`, // Add contrast for rotation
-        animation: isError ? "none" : "rotate 2s linear infinite, pulse 1.5s ease-in-out infinite",
+        borderWidth: "5px",
+        borderStyle: "solid",
+        borderColor: isPaused ? "#FFD700" : isError ? "#E11D48" : "#4F46E5", // Yellow when paused, red on error, blue otherwise
+        borderTopWidth: "5px",
+        borderTopStyle: "solid",
+        borderTopColor: isPaused ? "transparent" : isError ? "#F87171" : "transparent", // Separate borderTop property
+        animation: isPaused ? "none" : isError ? "none" : "rotate 2s linear infinite, pulse 1.5s ease-in-out infinite",
         zIndex: 1000, // Ensure it stays on top of other elements
+        cursor: isInDevMode ? "pointer" : "default",
       }}
     >
       <style>{`

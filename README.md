@@ -86,6 +86,10 @@ The application includes a development mode controlled by the environment variab
 
 The frontend continuously monitors the backend's `heartbeat` API. If communication fails or there is a timeout exceeding 10 seconds, it indicates that the backend might have crashed or disconnected. This feature helps users identify whether the backend is still processing intensive tasks, such as large model generation, or if it requires intervention to address a crash or disconnection.
 
+#### Special Behavior in Debug Mode
+
+In debug mode, this component becomes clickable. When clicked, the component turns yellow and stops sending requests to the backend, while updating the corresponding global variable. This allows developers to pause frequent API requests and debug issues between the frontend and backend more effectively.
+
 ## Discussion
 
 ### Why use Docker with bulky images?

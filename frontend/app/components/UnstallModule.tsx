@@ -3,18 +3,26 @@
 import { useGlobalState } from "../contexts/GlobalStateContext";
 import yaml from "js-yaml";
 
-export default function Button_LoadModel() {
+export default function UnstallModule() {
   const {
+    isInDevMode,
+    setIsInDevMode,
+    isConnected,
+    setIsConnected,
+    backendIsWorking,
+    setBackendIsWorking,
+    isConnectLose,
+    setIsConnectLose,
     modelLoaded,
     setModelLoaded,
     modelLoading,
     setModelLoading,
+    modelGenerating,
+    setModelGenerating,
   } = useGlobalState();
 
   const handleClick = async () => {
-    if (modelLoading || modelLoaded) return; // Prevent multiple clicks
-
-    setModelLoading(true);
+    if (!modelLoaded) return; // Prevent clicking when no model is loaded
 
     try {
       const configRes = await fetch("/config.yaml");
@@ -23,51 +31,49 @@ export default function Button_LoadModel() {
 
       const { backend_url, api_key } = config;
 
-      const response = await fetch(`${backend_url}/load_model/`, {
+      const response = await fetch(`${backend_url}/unload_model/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           "api-key": api_key,
         },
-        body: JSON.stringify({
-          pip_name: "microsoft/Phi-3.5-mini-instruct",
-        }),
       });
 
       if (!response.ok) {
-        throw new Error(`Failed to load model: ${response.statusText}`);
+        throw new Error(`Failed to unload model: ${response.statusText}`);
       }
 
       const data = await response.json();
       console.log(data.message);
-      setModelLoaded(true);
+      setModelLoaded(false);
     } catch (error) {
-      console.error("Error loading model:", error);
-    } finally {
-      setModelLoading(false);
+      console.error("Error unloading model:", error);
     }
   };
 
   return (
     <button
       onClick={handleClick}
-      disabled={modelLoading || modelLoaded}
+      disabled={!modelLoaded}
       style={{
         position: "absolute",
-        bottom: "5%",
+        top: "1%",
         left: "1%",
-        width: "8%",
+        width: "50px",
         height: "50px",
-        backgroundColor: modelLoaded ? "#32CD32" : "#1E90FF", // Green if loaded, blue otherwise
+        backgroundColor: modelLoaded ? "#FF4500" : "#A9A9A9", // OrangeRed if loaded, gray otherwise
         color: "white",
         border: "none",
-        borderRadius: "25px",
+        borderRadius: "50%", // Full circle
         fontSize: "14px",
-        cursor: modelLoading || modelLoaded ? "not-allowed" : "pointer",
+        cursor: modelLoaded ? "pointer" : "not-allowed",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
         textAlign: "center",
       }}
     >
-      {modelLoading ? "Model Loading" : modelLoaded ? "Model Loaded" : "Load Model"}
+      U
     </button>
   );
 }
