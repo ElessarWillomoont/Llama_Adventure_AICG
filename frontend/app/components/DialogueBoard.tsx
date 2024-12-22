@@ -47,10 +47,18 @@ export default function DialogueBoard() {
 
         const data = await response.json();
         if (data.status === "completed") {
-          const formattedResponse = data.response
-            .map((item: { role: string; content: string }) => `${item.role}: ${item.content}`)
-            .join("\n\n");
-          setResponseText(formattedResponse);
+          if (isInDevMode) {
+            const formattedResponse = data.response
+              .map((item: { role: string; content: string }) => `${item.role}: ${item.content}`)
+              .join("\n\n");
+            setResponseText(formattedResponse);
+          } else {
+            const lastAssistantResponse = data.response
+              .filter((item: { role: string; content: string }) => item.role === "assistant")
+              .map((item: { content: string }) => item.content)
+              .pop();
+            setResponseText(lastAssistantResponse || "No assistant response available.");
+          }
         } else {
           setResponseText("Error: " + data.response);
         }
@@ -65,7 +73,7 @@ export default function DialogueBoard() {
       fetchResponse();
     }
     previousModelGenerating.current = modelGenerating;
-  }, [modelGenerating]);
+  }, [modelGenerating, isInDevMode]);
 
   return (
     <div
@@ -93,6 +101,7 @@ export default function DialogueBoard() {
           overflowY: "auto", // Allow vertical scrolling if needed
           whiteSpace: "pre-wrap", // Preserve whitespace and wrap text
           color: "black", // Set font color to black
+          textAlign: "left", // Align text to the left
         }}
       >
         {responseText || "Waiting for response..."}
