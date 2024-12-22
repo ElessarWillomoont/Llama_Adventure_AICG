@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { GlobalStateProvider } from "./contexts/GlobalStateContext";
-import { ChatHistoryProvider } from "./contexts/ChatHistoryContext"; // 引入 ChatHistoryProvider
 import "./globals.css";
 
 const geistSans = Geist({
@@ -31,9 +30,7 @@ export default function RootLayout({
       >
         {/* 将 GlobalStateProvider 和 ChatHistoryProvider 包裹在一起 */}
         <GlobalStateProvider>
-          <ChatHistoryProvider>
             {children}
-          </ChatHistoryProvider>
         </GlobalStateProvider>
       </body>
     </html>

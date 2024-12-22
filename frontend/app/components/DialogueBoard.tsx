@@ -108,7 +108,7 @@ export default function DialogueBoard() {
         position: "absolute",
         top: "3%",
         bottom: "15%",
-        left: "10%",
+        left: "30%",
         right: "10%",
         backgroundColor: "white", // White background
         borderRadius: "10px", // Rounded corners

@@ -7,6 +7,7 @@ import Button_Send from "../components/Button_Send";
 import Button_LoadModel from "../components/Button_LoadModel"
 import UnstallModule from "../components/UnstallModule"
 import DialogueBoard from "../components/DialogueBoard"
+import GameStatus from "../components/GameStatus"
 
 export default function ChatInterface() {
   const { isConnected, isConnectLose } = useGlobalState();
@@ -28,7 +29,7 @@ export default function ChatInterface() {
         top: "50%",
         left: "50%",
         transform: "translate(-50%, -50%)",
-        width: "70%",
+        width: "90%",
         height: "90%",
         backgroundColor: "rgba(128, 128, 128, 0.5)", // Gray color with 50% transparency
         borderRadius: "8px",
@@ -50,6 +51,7 @@ export default function ChatInterface() {
       </div>
       <Button_Send value={inputValue} onClear={handleClear} />
       <InputBox value={inputValue} onChange={setInputValue} />
+      <GameStatus />
       <Button_LoadModel />
       <UnstallModule />
       <DialogueBoard />

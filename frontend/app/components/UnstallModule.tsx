@@ -58,7 +58,7 @@ export default function UnstallModule() {
       style={{
         position: "absolute",
         top: "1%",
-        left: "1%",
+        right: "1%",
         width: "50px",
         height: "50px",
         backgroundColor: modelLoaded ? "#FF4500" : "#A9A9A9", // OrangeRed if loaded, gray otherwise
