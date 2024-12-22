@@ -95,34 +95,6 @@ class LoadModelRequest(BaseModel):
 class ChatRequest(BaseModel):
     messages: list  # List of messages with roles and content
 
-@app.post("/load_model/")
-async def api_load_model(request: LoadModelRequest, api_key: str = Header(...)):
-    validate_api_key(api_key)
-    global model_pipeline, loading_status
-    if model_pipeline is not None:
-        raise HTTPException(status_code=400, detail="A model is already loaded. Unload it first.")
-    try:
-        loading_status["loading_model"] = True
-        model_pipeline = load_model()
-        loading_status["loading_model"] = False
-        return {"message": f"Model '{request.pip_name}' loaded successfully."}
-    except Exception as e:
-        loading_status["loading_model"] = False
-        raise HTTPException(status_code=500, detail=f"Failed to load model: {str(e)}")
-
-@app.post("/unload_model/")
-async def api_unload_model(api_key: str = Header(...)):
-    validate_api_key(api_key)
-    global model_pipeline
-    if model_pipeline is None:
-        raise HTTPException(status_code=400, detail="No model is currently loaded.")
-    try:
-        unload_model(model_pipeline)
-        model_pipeline = None
-        return {"message": "Model unloaded successfully."}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to unload model: {str(e)}")
-
 from fastapi import BackgroundTasks
 
 # A placeholder for storing the last chat response (for simplicity)
@@ -141,6 +113,42 @@ def perform_chat_task(messages, generation_args):
         last_response["status"] = "error"
         last_response["response"] = str(e)
         loading_status["chat_generating"] = False
+
+def perform_load_task():
+    """Perform the model loading task in the background."""
+    global model_pipeline, loading_status
+    try:
+        loading_status["loading_model"] = True
+        model_pipeline = load_model()
+        loading_status["loading_model"] = False
+    except Exception as e:
+        loading_status["loading_model"] = False
+        raise e
+
+@app.post("/load_model/")
+async def api_load_model(request: LoadModelRequest, background_tasks: BackgroundTasks, api_key: str = Header(...)):
+    validate_api_key(api_key)
+    global model_pipeline, loading_status
+    if model_pipeline is not None:
+        raise HTTPException(status_code=400, detail="A model is already loaded. Unload it first.")
+    try:
+        background_tasks.add_task(perform_load_task)
+        return {"message": "Model loading started in the background."}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to start model loading: {str(e)}")
+
+@app.post("/unload_model/")
+async def api_unload_model(api_key: str = Header(...)):
+    validate_api_key(api_key)
+    global model_pipeline
+    if model_pipeline is None:
+        raise HTTPException(status_code=400, detail="No model is currently loaded.")
+    try:
+        unload_model(model_pipeline)
+        model_pipeline = None
+        return {"message": "Model unloaded successfully."}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to unload model: {str(e)}")
 
 @app.post("/chat/")
 async def api_chat(request: ChatRequest, background_tasks: BackgroundTasks, api_key: str = Header(...)):
