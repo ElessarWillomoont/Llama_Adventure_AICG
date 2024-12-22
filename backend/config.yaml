@@ -4,3 +4,5 @@ API_KEY: my-secret-key
 # Maximum number of tokens to be generated in a single response.
 # This controls the length of the model's output. If not defined, the default value is 512.
 max_new_tokens: 512
+
+FRONTEND_URL: http://localhost:3000

@@ -39,14 +39,19 @@ def load_model():
     return pipe
 
 def interactive_session(pipe):
-    """Start an interactive session with the user."""
+    """
+    
+    Start an interactive session with the user.
+    not used as made another way to fulfill in api 
+    
+    """
     print("\nInteractive session started. Type 'exit' to quit.")
     max_new_tokens = get_max_new_tokens()
     generation_args = {
         "max_new_tokens": max_new_tokens,
         "return_full_text": False,
         "temperature": 0.3,
-        "do_sample": False,
+        "do_sample": True,
     }
 
     while True:

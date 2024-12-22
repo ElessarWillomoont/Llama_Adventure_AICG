@@ -1,0 +1,13 @@
+# Python 3.11 used when make the project
+fastapi==0.115.6
+uvicorn==0.34.0
+pydantic==2.10.4
+requests==2.26.0
+starlette==0.41.3
+numpy==2.1.2
+torch==2.5.1
+transformers==4.47.1
+h11==0.14.0
+jinja2==3.1.5
+pillow==10.2.0
+accelerate==1.2.1
