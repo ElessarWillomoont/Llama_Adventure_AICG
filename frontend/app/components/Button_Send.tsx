@@ -23,7 +23,7 @@ async function fetchConfig() {
 }
 
 // Function to format input for API
-async function formalizeInput(input: string, dialogueName: string, backendUrl: string, apiKey: string) {
+async function formalizeInput(input: string, dialogueName: string, backendUrl: string, apiKey: string, systemMessage: string) {
   try {
     // Call the read-conversation API to fetch conversation history
     const historyResponse = await fetch(`${backendUrl}/read-conversation/${dialogueName}`, {
@@ -40,20 +40,12 @@ async function formalizeInput(input: string, dialogueName: string, backendUrl: s
     const historyData = await historyResponse.json();
     console.log("Conversation History:", historyData.history);
 
-    // Extract the last "system" content as header
-    let header = "You are a helpful assistant.";
-    const histories = historyData.history.filter((item: any) => typeof item === "object");
-    if (histories.length > 0) {
-      const lastSystemMessage = histories[histories.length - 1].content.find(
-        (message: { role: string }) => message.role === "system"
-      );
-      if (lastSystemMessage) {
-        header = lastSystemMessage.content;
-      }
-    }
+    // Use the provided systemMessage parameter
+    let header = systemMessage;
 
     // Extract all "user" and "assistant" messages in order
     const messages = [{ role: "system", content: header }];
+    const histories = historyData.history.filter((item: any) => typeof item === "object");
     histories.forEach((history: any) => {
       history.content.forEach((message: { role: string; content: string }) => {
         if (message.role === "user" || message.role === "assistant") {
@@ -115,7 +107,7 @@ export default function Button_Send({ value, onClear }: ButtonSendProps) {
     if (!modelLoaded || modelGenerating || modelLoading || !config) return; // Prevent clicking when no model is loaded, generating is in progress, loading is in progress, or config is not loaded
 
     try {
-      const formattedInput = await formalizeInput(value, dialogueName, config.backend_url, config.api_key);
+      const formattedInput = await formalizeInput(value, dialogueName, config.backend_url, config.api_key, systemMessageCoStar);
 
       const response = await fetch(`${config.backend_url}/chat/`, {
         method: "POST",
