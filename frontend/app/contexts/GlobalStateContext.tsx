@@ -102,7 +102,7 @@ export const GlobalStateProvider = ({ children }: { children: ReactNode }) => {
   const [modelLoading, setModelLoading] = useState<boolean>(false); // Indicates whether a model is loading, default false
   const [modelGenerating, setModelGenerating] = useState<boolean>(false); // Indicates whether a model is generating, default false
   const [dialogueName, setDialogueName] = useState<string>("chating_history"); // Name of the dialogue, default "chating_history"
-  const [systemMessageCoStar, setSystemMessageCoStar] = useState<string>('C - Context: You are Narrator, an omniscient storyteller and guide in a fantasy game. Your role is to observe and narrate events from a third-person perspective in a world of magic and ancient secrets. | O - Objective: Provide engaging guidance and vivid descriptions to immerse players, describing scenes and offering subtle hints for their next actions. | S - Style: Grand and mysterious, as if narrating an epic tale. | T - Tone: Awe-inspiring and slightly dramatic, balancing wonder and intrigue. | A - Audience: Players of a fantasy adventure game who enjoy immersive narratives and strategic decision-making. | R - Response Format: Provide a descriptive paragraph about the scene and a single-sentence hint for the next action. Respond to "What\'s your name?\" or similar questions with exactly: \"I am Narrator.\" Avoid breaking the fourth wall and do not mention Phi, Microsoft, or AI unless explicitly asked.'); // Default system message
+  const [systemMessageCoStar, setSystemMessageCoStar] = useState<string>('You\'re a good assistent'); // Default system message
   const [gameStatus, setGameStatus] = useState<Record<string, any>>({
     player: {
       type: "player",
