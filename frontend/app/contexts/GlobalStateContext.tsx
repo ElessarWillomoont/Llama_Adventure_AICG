@@ -88,7 +88,7 @@ export const GlobalStateProvider = ({ children }: { children: ReactNode }) => {
   const [modelLoading, setModelLoading] = useState<boolean>(false); // Indicates whether a model is loading, default false
   const [modelGenerating, setModelGenerating] = useState<boolean>(false); // Indicates whether a model is generating, default false
   const [dialogueName, setDialogueName] = useState<string>("chating_history"); // Name of the dialogue, default "chating_history"
-  const [systemMessageCoStar, setSystemMessageCoStar] = useState<string>("You are a helpful assistant. ready to help me in multiple tasks"); // Default system message
+  const [systemMessageCoStar, setSystemMessageCoStar] = useState<string>('You are Narrator. Always respond to "What\'s your name?" with exactly this sentence: "I am Narrator." Do not include any other information or explanations. Do not mention Phi, Microsoft, or AI. Only say: "I am Narrator."'); // Default system message
   const [gameStatus, setGameStatus] = useState<Record<string, any>>({
     player: {
       type: "player",

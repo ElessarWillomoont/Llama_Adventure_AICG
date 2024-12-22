@@ -40,11 +40,10 @@ async function formalizeInput(input: string, dialogueName: string, backendUrl: s
     const historyData = await historyResponse.json();
     console.log("Conversation History:", historyData.history);
 
-    // Use the provided systemMessage parameter
-    let header = systemMessage;
+    // Use the provided systemMessage parameter directly
+    const messages = [{ role: "system", content: systemMessage }];
 
     // Extract all "user" and "assistant" messages in order
-    const messages = [{ role: "system", content: header }];
     const histories = historyData.history.filter((item: any) => typeof item === "object");
     histories.forEach((history: any) => {
       history.content.forEach((message: { role: string; content: string }) => {
