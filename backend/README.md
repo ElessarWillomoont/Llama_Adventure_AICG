@@ -337,3 +337,76 @@ Checks if the backend is running.
   ```
 
 ---
+
+## **11. Chat Generation Status**
+
+**Endpoint:**
+```
+GET /chat-generation-status/
+```
+
+**Description:**
+Checks if the chat generation task is currently running.
+
+**Headers:**
+- `api_key`: Your API key.
+
+**Postman Test Example:**
+- **Method:** `GET`
+- **URL:** `http://127.0.0.1:5000/chat-generation-status/`
+- **Headers:**
+  ```
+  api_key: my-secret-key
+  ```
+- **Expected Responses:**
+  - **Not Generating:**
+    ```json
+    {
+        "chat_generating": false
+    }
+    ```
+  - **Generating:**
+    ```json
+    {
+        "chat_generating": true
+    }
+    ```
+
+---
+
+## **12. Load Model Status**
+
+**Endpoint:**
+```
+GET /load-status/
+```
+
+**Description:**
+Checks if a model loading task is currently running.
+
+**Headers:**
+- `api_key`: Your API key.
+
+**Postman Test Example:**
+- **Method:** `GET`
+- **URL:** `http://127.0.0.1:5000/load-status/`
+- **Headers:**
+  ```
+  api_key: my-secret-key
+  ```
+- **Expected Responses:**
+  - **Not Loading:**
+    ```json
+    {
+        "loading_model": false
+    }
+    ```
+  - **Loading:**
+    ```json
+    {
+        "loading_model": true
+    }
+    ```
+
+---
+
