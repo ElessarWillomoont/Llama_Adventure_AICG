@@ -74,6 +74,48 @@ This setup is ideal for users with high-performance computers, real-time require
 
 4. Access the application through the Node.js server for the frontend experience.
 
+
+## Known Bugs and Solutions
+
+### 1. Browser error when running the game (especially during the initial communication button check):
+
+**Error:**
+
+```
+Error: Failed to fetch
+Failed to load resource: net::ERR_EMPTY_RESPONSE
+```
+
+**Solution:**
+
+This indicates that the frontend cannot communicate with the backend. Please verify that the backend is running correctly and that the `public/config.yaml` file in the frontend correctly points to the backend.
+
+### 2. Backend is running, but the frontend reports the following error:
+
+**Error:**
+
+```
+Access to fetch at 'http://localhost:5000/test-communication' from origin 'http://localhost:3001' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource. If an opaque response serves your needs, set the request's mode to 'no-cors' to fetch the resource with CORS disabled.
+```
+
+**Solution:**
+
+This is due to the browser's CORS policy preventing direct API communication between local servers. Please check that the `FRONTEND_URL` setting in the backend's `config.yaml` correctly points to the frontend.
+
+### 3. Long delay on the first click of "Load Module"
+
+**Solution:**
+
+This is not a bug. The delay occurs because the backend requires time to download the model after running the `docker-compose up` command. To avoid blocking processes, the model's loading and downloading process is handled in the background, so progress is not displayed in real time.
+
+For the current `phi-3.5-mini`, the model weights are approximately 5GB. You can monitor internet traffic and memory usage using resource managers or other tools to check the download progress.
+
+### 4. Large Docker image size
+
+Yes, both the frontend and backend images exceed 2GB, with the backend image approaching 30GB after loading the model. This is due to Node.js and PyTorch providing extensive tools for various development tasks, most of which are unnecessary for this specific task. In the future, I plan to optimize this or transition the architecture to frameworks like WebLLM to reduce the overall footprint.
+
+
+
 ## Frontend
 
 Using a Next.js project as the frontend facilitates rapid development of a functional prototype.
