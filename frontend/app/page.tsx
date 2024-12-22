@@ -1,11 +1,14 @@
 "use client";
 
+import { useGlobalState } from "./contexts/GlobalStateContext";
 import Button_DEV_MODE from "./components/Button_DEV_MODE";
 import ButtonCheckCommunication from "./components/ButtonCheckCommunication";
-import AnimatedCircle from "./components/AnimateCircle"
-
+import AnimatedCircle from "./components/AnimateCircle";
+import ChatInterface from "./components/ChatInterface";
 
 export default function Home() {
+  const { isInDevMode, isConnected, backendIsWorking, isConnectLose } = useGlobalState();
+
   return (
     <div
       style={{
@@ -19,8 +22,9 @@ export default function Home() {
       }}
     >
       <Button_DEV_MODE />
-      <AnimatedCircle />
       <ButtonCheckCommunication />
+      {isConnected && <AnimatedCircle />}
+      {isConnected && !isConnectLose && <ChatInterface />}
     </div>
   );
 }
