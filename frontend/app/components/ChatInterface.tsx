@@ -3,10 +3,15 @@
 import { useState } from "react";
 import { useGlobalState } from "../contexts/GlobalStateContext";
 import InputBox from "../components/InputBox";
+import Button_Send from "../components/Button_Send";
 
 export default function ChatInterface() {
   const { isConnected, isConnectLose } = useGlobalState();
   const [inputValue, setInputValue] = useState<string>("");
+
+  const handleClear = () => {
+    setInputValue(""); // 清空输入框
+  };
 
   // Render the component only if the connection is successful and not lost
   if (!isConnected || isConnectLose) {
@@ -40,6 +45,7 @@ export default function ChatInterface() {
       >
         {inputValue || "Type something in the input box..."}
       </div>
+      <Button_Send value={inputValue} onClear={handleClear} />
       <InputBox value={inputValue} onChange={setInputValue} />
     </div>
   );

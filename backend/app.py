@@ -26,6 +26,7 @@ app.add_middleware(
 # Global variables for the model pipeline and device
 model_pipeline = None
 max_new_tokens = MAX_NEW_TOKENS
+loading_status = {"loading_model": False, "chat_generating": False}
 
 def validate_api_key(api_key: str):
     if api_key != API_KEY:
@@ -97,13 +98,16 @@ class ChatRequest(BaseModel):
 @app.post("/load_model/")
 async def api_load_model(request: LoadModelRequest, api_key: str = Header(...)):
     validate_api_key(api_key)
-    global model_pipeline
+    global model_pipeline, loading_status
     if model_pipeline is not None:
         raise HTTPException(status_code=400, detail="A model is already loaded. Unload it first.")
     try:
+        loading_status["loading_model"] = True
         model_pipeline = load_model()
+        loading_status["loading_model"] = False
         return {"message": f"Model '{request.pip_name}' loaded successfully."}
     except Exception as e:
+        loading_status["loading_model"] = False
         raise HTTPException(status_code=500, detail=f"Failed to load model: {str(e)}")
 
 @app.post("/unload_model/")
@@ -126,14 +130,17 @@ last_response = {"status": "processing", "response": None}
 
 def perform_chat_task(messages, generation_args):
     """Perform the chat generation task in the background."""
-    global model_pipeline, last_response
+    global model_pipeline, last_response, loading_status
     try:
+        loading_status["chat_generating"] = True
         output = model_pipeline(messages, **generation_args)
         last_response["status"] = "completed"
         last_response["response"] = output[0]["generated_text"]
+        loading_status["chat_generating"] = False
     except Exception as e:
         last_response["status"] = "error"
         last_response["response"] = str(e)
+        loading_status["chat_generating"] = False
 
 @app.post("/chat/")
 async def api_chat(request: ChatRequest, background_tasks: BackgroundTasks, api_key: str = Header(...)):
@@ -168,6 +175,16 @@ def chat_status(api_key: str = Header(...)):
 def heartbeat(api_key: str = Header(...)):
     validate_api_key(api_key)
     return {"status": "alive", "message": "Backend is running."}
+
+@app.get("/load-status/")
+def load_status(api_key: str = Header(...)):
+    validate_api_key(api_key)
+    return {"loading_model": loading_status["loading_model"]}
+
+@app.get("/chat-generation-status/")
+def chat_generation_status(api_key: str = Header(...)):
+    validate_api_key(api_key)
+    return {"chat_generating": loading_status["chat_generating"]}
 
 if __name__ == "__main__":
     import uvicorn
