@@ -20,10 +20,12 @@ export default function DialogueBoard() {
     setModelLoading,
     modelGenerating,
     setModelGenerating,
+    dialogueName
   } = useGlobalState();
 
   const [responseText, setResponseText] = useState<string | null>(null);
   const previousModelGenerating = useRef<boolean>(modelGenerating);
+//   const dialogueName = "chating_history";
 
   useEffect(() => {
     const fetchResponse = async () => {
@@ -59,6 +61,31 @@ export default function DialogueBoard() {
               .pop();
             setResponseText(lastAssistantResponse || "No assistant response available.");
           }
+
+          // Save the response to the backend
+          const saveResponse = async () => {
+            try {
+              const saveResponse = await fetch(`${backend_url}/write-conversation/${dialogueName}`, {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  "api-key": api_key,
+                },
+                body: JSON.stringify({ content: data.response, index: null }),
+              });
+
+              if (!saveResponse.ok) {
+                throw new Error(`Failed to save conversation: ${saveResponse.statusText}`);
+              }
+
+              const saveData = await saveResponse.json();
+              console.log(saveData.message);
+            } catch (error) {
+              console.error("Error saving conversation:", error);
+            }
+          };
+
+          saveResponse();
         } else {
           setResponseText("Error: " + data.response);
         }

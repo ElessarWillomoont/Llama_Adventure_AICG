@@ -52,6 +52,13 @@ interface GlobalStateType {
    */
   modelGenerating: boolean;
   setModelGenerating: (value: boolean) => void;
+
+  /**
+   * Name of the dialogue
+   * Default: "chating_history"
+   */
+  dialogueName: string;
+  setDialogueName: (value: string) => void;
 }
 
 // Create the context
@@ -66,6 +73,7 @@ export const GlobalStateProvider = ({ children }: { children: ReactNode }) => {
   const [modelLoaded, setModelLoaded] = useState<boolean>(false); // Indicates whether a model is loaded, default false
   const [modelLoading, setModelLoading] = useState<boolean>(false); // Indicates whether a model is loading, default false
   const [modelGenerating, setModelGenerating] = useState<boolean>(false); // Indicates whether a model is generating, default false
+  const [dialogueName, setDialogueName] = useState<string>("chating_history"); // Name of the dialogue, default "chating_history"
 
   return (
     <GlobalStateContext.Provider
@@ -84,6 +92,8 @@ export const GlobalStateProvider = ({ children }: { children: ReactNode }) => {
         setModelLoading,
         modelGenerating,
         setModelGenerating,
+        dialogueName,
+        setDialogueName,
       }}
     >
       {children}

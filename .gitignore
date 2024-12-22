@@ -4,6 +4,8 @@ backend/venv
 backend/__pycache__
 backend/.cache
 backend/models/__pycache__
+backend/db
+
 #from next
 
 # dependencies

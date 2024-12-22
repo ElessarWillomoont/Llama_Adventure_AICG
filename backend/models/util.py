@@ -75,14 +75,22 @@ def write_conversation(dialogue_name, content, index=None):
         history = yaml.safe_load(file) or []
 
     if index is None:
+        # Automatically assign index based on current history length
+        index = len(history)
+        content["index"] = index
         history.append(content)
     elif isinstance(index, int) and 0 <= index < len(history):
+        # Update the existing entry with the given index
+        content["index"] = index
         history[index] = content
     else:
         raise IndexError("Invalid index for writing to conversation history.")
 
     with open(file_path, 'w') as file:
         yaml.dump(history, file)
+
+    return f"Content written at index {index}"
+
 
 def heartbeat():
     """

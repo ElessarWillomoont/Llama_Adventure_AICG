@@ -2,10 +2,76 @@
 
 import { useGlobalState } from "../contexts/GlobalStateContext";
 import yaml from "js-yaml";
+import { useState, useEffect } from "react";
 
 interface ButtonSendProps {
   value: string; // 输入框中的值
   onClear: () => void; // 清空输入框和页面内容的回调
+}
+
+// Function to fetch config
+async function fetchConfig() {
+  try {
+    const configRes = await fetch("/config.yaml");
+    const configText = await configRes.text();
+    const config = yaml.load(configText) as { backend_url: string; api_key: string };
+    return config;
+  } catch (error) {
+    console.error("Error fetching config:", error);
+    throw error;
+  }
+}
+
+// Function to format input for API
+async function formalizeInput(input: string, dialogueName: string, backendUrl: string, apiKey: string) {
+  try {
+    // Call the read-conversation API to fetch conversation history
+    const historyResponse = await fetch(`${backendUrl}/read-conversation/${dialogueName}`, {
+      headers: {
+        "Content-Type": "application/json",
+        "api-key": apiKey,
+      },
+    });
+
+    if (!historyResponse.ok) {
+      throw new Error(`Failed to fetch conversation history: ${historyResponse.statusText}`);
+    }
+
+    const historyData = await historyResponse.json();
+    console.log("Conversation History:", historyData.history);
+
+    // Extract the last "system" content as header
+    let header = "You are a helpful assistant.";
+    const histories = historyData.history.filter((item: any) => typeof item === "object");
+    if (histories.length > 0) {
+      const lastSystemMessage = histories[histories.length - 1].content.find(
+        (message: { role: string }) => message.role === "system"
+      );
+      if (lastSystemMessage) {
+        header = lastSystemMessage.content;
+      }
+    }
+
+    // Extract all "user" and "assistant" messages in order
+    const messages = [{ role: "system", content: header }];
+    histories.forEach((history: any) => {
+      history.content.forEach((message: { role: string; content: string }) => {
+        if (message.role === "user" || message.role === "assistant") {
+          messages.push({ role: message.role, content: message.content });
+        }
+      });
+    });
+
+    // Add the current input as the last "user" message
+    messages.push({ role: "user", content: input });
+
+    console.log("Formatted Messages:", messages);
+
+    return { messages };
+  } catch (error) {
+    console.error("Error formatting input:", error);
+    throw error;
+  }
 }
 
 export default function Button_Send({ value, onClear }: ButtonSendProps) {
@@ -23,30 +89,37 @@ export default function Button_Send({ value, onClear }: ButtonSendProps) {
     modelLoading,
     setModelLoading,
     modelGenerating,
+    dialogueName,
   } = useGlobalState();
 
+  const [config, setConfig] = useState<{ backend_url: string; api_key: string } | null>(null);
+
+  useEffect(() => {
+    const loadConfig = async () => {
+      try {
+        const fetchedConfig = await fetchConfig();
+        setConfig(fetchedConfig);
+      } catch (error) {
+        console.error("Failed to load config:", error);
+      }
+    };
+
+    loadConfig();
+  }, []);
+
   const handleClick = async () => {
-    if (!modelLoaded || modelGenerating || modelLoading) return; // Prevent clicking when no model is loaded, generating is in progress, or loading is in progress
+    if (!modelLoaded || modelGenerating || modelLoading || !config) return; // Prevent clicking when no model is loaded, generating is in progress, loading is in progress, or config is not loaded
 
     try {
-      const configRes = await fetch("/config.yaml");
-      const configText = await configRes.text();
-      const config = yaml.load(configText) as { backend_url: string; api_key: string };
+      const formattedInput = await formalizeInput(value, dialogueName, config.backend_url, config.api_key);
 
-      const { backend_url, api_key } = config;
-
-      const response = await fetch(`${backend_url}/chat/`, {
+      const response = await fetch(`${config.backend_url}/chat/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "api-key": api_key,
+          "api-key": config.api_key,
         },
-        body: JSON.stringify({
-          messages: [
-            { role: "system", content: "You are a helpful assistant." },
-            { role: "user", content: value },
-          ],
-        }),
+        body: JSON.stringify(formattedInput),
       });
 
       if (!response.ok) {
@@ -64,7 +137,7 @@ export default function Button_Send({ value, onClear }: ButtonSendProps) {
   return (
     <button
       onClick={handleClick}
-      disabled={!modelLoaded || modelGenerating || modelLoading}
+      disabled={!modelLoaded || modelGenerating || modelLoading || !config}
       style={{
         position: "absolute",
         bottom: "5%",
@@ -82,7 +155,7 @@ export default function Button_Send({ value, onClear }: ButtonSendProps) {
         border: "none",
         borderRadius: "25px", // 半圆角
         fontSize: "14px",
-        cursor: modelLoaded && !modelGenerating && !modelLoading ? "pointer" : "not-allowed",
+        cursor: modelLoaded && !modelGenerating && !modelLoading && config ? "pointer" : "not-allowed",
         textAlign: "center",
       }}
     >
