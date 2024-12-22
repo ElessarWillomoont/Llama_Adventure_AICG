@@ -73,6 +73,20 @@ interface GlobalStateType {
    */
   gameStatus: Record<string, any>;
   setGameStatus: (value: Record<string, any>) => void;
+
+  /**
+   * Indicates whether the send key is pressed
+   * Default: false
+   */
+  sendKeyPressed: boolean;
+  setSendKeyPressed: (value: boolean) => void;
+
+  /**
+   * Indicates whether the system is responding
+   * Default: false
+   */
+  responding: boolean;
+  setResponding: (value: boolean) => void;
 }
 
 // Create the context
@@ -107,6 +121,8 @@ export const GlobalStateProvider = ({ children }: { children: ReactNode }) => {
       state: "The place where the player awakens."
     }
   });
+  const [sendKeyPressed, setSendKeyPressed] = useState<boolean>(false); // Indicates whether the send key is pressed, default false
+  const [responding, setResponding] = useState<boolean>(false); // Indicates whether the system is responding, default false
 
   return (
     <GlobalStateContext.Provider
@@ -131,6 +147,10 @@ export const GlobalStateProvider = ({ children }: { children: ReactNode }) => {
         setSystemMessageCoStar,
         gameStatus,
         setGameStatus,
+        sendKeyPressed,
+        setSendKeyPressed,
+        responding,
+        setResponding,
       }}
     >
       {children}

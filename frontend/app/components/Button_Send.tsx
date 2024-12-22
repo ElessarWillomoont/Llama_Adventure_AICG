@@ -65,6 +65,21 @@ async function formalizeInput(input: string, dialogueName: string, backendUrl: s
   }
 }
 
+export function useIsResponding(
+  modelLoading: boolean,
+  modelGenerating: boolean,
+  setResponding: (value: boolean) => void
+) {
+  useEffect(() => {
+    if (modelLoading || modelGenerating) {
+      setResponding(true);
+    } else {
+      setResponding(false);
+    }
+  }, [modelLoading, modelGenerating, setResponding]);
+}
+
+
 export default function Button_Send({ value, onClear }: ButtonSendProps) {
   const {
     isInDevMode,
@@ -85,6 +100,10 @@ export default function Button_Send({ value, onClear }: ButtonSendProps) {
     setSystemMessageCoStar,
     gameStatus,
     setGameStatus,
+    sendKeyPressed,
+    setSendKeyPressed,
+    responding,
+    setResponding,
   } = useGlobalState();
 
   const [config, setConfig] = useState<{ backend_url: string; api_key: string } | null>(null);
@@ -101,6 +120,8 @@ export default function Button_Send({ value, onClear }: ButtonSendProps) {
 
     loadConfig();
   }, []);
+
+  useIsResponding(modelLoading, modelGenerating, setResponding);
 
   const handleClick = async () => {
     if (!modelLoaded || modelGenerating || modelLoading || !config) return; // Prevent clicking when no model is loaded, generating is in progress, loading is in progress, or config is not loaded
