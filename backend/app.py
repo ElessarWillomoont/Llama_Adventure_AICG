@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Header, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 import yaml
-from models.util import init_db_dir, new_conversation, read_conversation, write_conversation, process_dialogue, generate_response, summarize_conversation
+from models.util import init_db_dir, new_conversation, read_conversation, write_conversation
 from models.model_new import load_model, unload_model
 from pydantic import BaseModel
 
@@ -10,6 +10,7 @@ with open("config.yaml", "r") as file:
     config = yaml.safe_load(file)
 API_KEY = config.get("API_KEY", "default_key")
 FRONTEND_URL = config.get("FRONTEND_URL", "http://localhost:3000")
+MAX_NEW_TOKENS = config.get("max_new_tokens", 4096)
 
 app = FastAPI()
 
@@ -22,8 +23,9 @@ app.add_middleware(
     allow_headers=["*"],  # Allow all HTTP headers
 )
 
-# Global variable for the model pipeline
+# Global variables for the model pipeline and device
 model_pipeline = None
+max_new_tokens = MAX_NEW_TOKENS
 
 def validate_api_key(api_key: str):
     if api_key != API_KEY:
@@ -69,33 +71,6 @@ def add_to_conversation(dialogue_name: str, content: dict, index: int = None, ap
         return {"message": "Content written to conversation."}
     except IndexError as e:
         raise HTTPException(status_code=400, detail=str(e))
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-@app.post("/process-dialogue/{dialogue_name}")
-def process_conversation(dialogue_name: str, api_key: str = Header(...)):
-    validate_api_key(api_key)
-    try:
-        process_dialogue(dialogue_name)
-        return {"message": "Dialogue processed with model."}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-@app.post("/generate-response/{dialogue_name}")
-def generate_model_response(dialogue_name: str, input_text: str, api_key: str = Header(...)):
-    validate_api_key(api_key)
-    try:
-        generate_response(dialogue_name, input_text)
-        return {"message": "Response generated and added to conversation."}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-@app.get("/summarize-conversation/{dialogue_name}")
-def summarize_conversation_history(dialogue_name: str, api_key: str = Header(...)):
-    validate_api_key(api_key)
-    try:
-        summary = summarize_conversation(dialogue_name)
-        return {"message": "Conversation summarized.", "summary": summary}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -172,11 +147,10 @@ async def api_chat(request: ChatRequest, background_tasks: BackgroundTasks, api_
     last_response["response"] = None
 
     # Prepare the input messages and generation arguments
-    max_new_tokens = 1024  # Customize as needed
     generation_args = {
         "max_new_tokens": max_new_tokens,
         "return_full_text": True,
-        "temperature": 0.7,
+        "temperature": 0.3,
         "do_sample": True,
     }
 

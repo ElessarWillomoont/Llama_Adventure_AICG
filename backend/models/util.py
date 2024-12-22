@@ -1,6 +1,5 @@
 import os
 import yaml
-from models.model_new import load_model, unload_model, interactive_session
 import multiprocessing
 import time
 
@@ -85,70 +84,6 @@ def write_conversation(dialogue_name, content, index=None):
     with open(file_path, 'w') as file:
         yaml.dump(history, file)
 
-def process_dialogue(dialogue_name, model="microsoft/Phi-3.5-mini-instruct"):
-    """
-    Process dialogue history with a specified model.
-
-    :param dialogue_name: Name of the dialogue (used as the file name).
-    :param model: Model name to use for processing (default: microsoft/Phi-3.5-mini-instruct).
-    """
-    pipe = load_model()
-    try:
-        history = read_conversation(dialogue_name)
-        max_new_tokens = 512  # Example setting
-        for entry in history:
-            if isinstance(entry, dict) and "user" in entry:
-                input_text = entry["user"]
-                generated = pipe(input_text, max_new_tokens=max_new_tokens)
-                entry["assistant"] = generated[0]["generated_text"]
-        write_conversation(dialogue_name, history)
-    finally:
-        unload_model(pipe)
-
-def generate_response(dialogue_name, input_text, model="microsoft/Phi-3.5-mini-instruct"):
-    """
-    Generate a response for a single user input and update the conversation.
-
-    :param dialogue_name: Name of the dialogue (used as the file name).
-    :param input_text: User input for the model.
-    :param model: Model name to use for generating response.
-    """
-    pipe = load_model()
-    try:
-        response = pipe(input_text, max_new_tokens=512)
-        write_conversation(dialogue_name, {"user": input_text, "assistant": response[0]["generated_text"]})
-    finally:
-        unload_model(pipe)
-
-def summarize_conversation(dialogue_name, model="microsoft/Phi-3.5-mini-instruct"):
-    """
-    Summarize the entire conversation history.
-
-    :param dialogue_name: Name of the dialogue (used as the file name).
-    :param model: Model name to use for summarization.
-    """
-    pipe = load_model()
-    try:
-        history = read_conversation(dialogue_name)
-        conversation_text = "\n".join([f"User: {entry['user']}\nAssistant: {entry['assistant']}" for entry in history if isinstance(entry, dict)])
-        summary = pipe(conversation_text, max_new_tokens=512)
-        return summary[0]["generated_text"]
-    finally:
-        unload_model(pipe)
-
-def interactive_session_with_name(dialogue_name):
-    """
-    Load an interactive session with the model and store the dialogue name.
-
-    :param dialogue_name: Name of the dialogue to store the alias.
-    """
-    pipe = load_model()
-    try:
-        print(f"Starting interactive session for dialogue: {dialogue_name}")
-        interactive_session(pipe)
-    finally:
-        unload_model(pipe)
-
 def heartbeat():
     """
     Display a heartbeat to indicate the program is running.
@@ -174,21 +109,6 @@ if __name__ == "__main__":
         write_conversation(dialogue_name, {"user": "Hi", "assistant": "Hello!"})
         write_conversation(dialogue_name, {"user": "How are you?", "assistant": "I am fine, thanks!"})
 
-        # Test processing dialogue with model
-        print("Processing dialogue with model...")
-        process_dialogue(dialogue_name)
-
-        # Test generating a response
-        print("Generating a response...")
-        generate_response(dialogue_name, "What is your name?")
-
-        # Test summarizing the conversation
-        print("Summarizing conversation...")
-        print(summarize_conversation(dialogue_name))
-
-        # Test interactive session with dialogue name
-        print("Starting interactive session...")
-        interactive_session_with_name(dialogue_name)
     finally:
         # Ensure heartbeat process is terminated
         heartbeat_process.terminate()

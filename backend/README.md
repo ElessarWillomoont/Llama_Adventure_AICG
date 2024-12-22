@@ -19,18 +19,19 @@ Tests communication with the backend.
 **Headers:**
 - `api_key`: Your API key.
 
-**Request Example:**
-```bash
-curl -X GET http://127.0.0.1:5000/test-communication \
-     -H "api_key: <your-api-key>"
-```
-
-**Response Example:**
-```json
-{
-    "message": "Hallo World!"
-}
-```
+**Postman Test Example:**
+- **Method:** `GET`
+- **URL:** `http://127.0.0.1:5000/test-communication`
+- **Headers:**
+  ```
+  api_key: my-secret-key
+  ```
+- **Expected Response:**
+  ```json
+  {
+      "message": "Hallo World!"
+  }
+  ```
 
 ---
 
@@ -47,19 +48,20 @@ Initializes the database directory.
 **Headers:**
 - `api_key`: Your API key.
 
-**Request Example:**
-```bash
-curl -X POST http://127.0.0.1:5000/init-db \
-     -H "api_key: <your-api-key>"
-```
-
-**Response Example:**
-```json
-{
-    "message": "Database directory initialized.",
-    "path": "/path/to/db"
-}
-```
+**Postman Test Example:**
+- **Method:** `POST`
+- **URL:** `http://127.0.0.1:5000/init-db`
+- **Headers:**
+  ```
+  api_key: my-secret-key
+  ```
+- **Expected Response:**
+  ```json
+  {
+      "message": "Database directory initialized.",
+      "path": "/path/to/db"
+  }
+  ```
 
 ---
 
@@ -76,22 +78,20 @@ Creates a new conversation file with the specified `dialogue_name`.
 **Headers:**
 - `api_key`: Your API key.
 
-**Path Parameters:**
-- `dialogue_name`: The name of the conversation.
-
-**Request Example:**
-```bash
-curl -X POST http://127.0.0.1:5000/new-conversation/test-dialogue \
-     -H "api_key: <your-api-key>"
-```
-
-**Response Example:**
-```json
-{
-    "message": "New conversation created.",
-    "file_path": "/path/to/test-dialogue.yaml"
-}
-```
+**Postman Test Example:**
+- **Method:** `POST`
+- **URL:** `http://127.0.0.1:5000/new-conversation/test-dialogue`
+- **Headers:**
+  ```
+  api_key: my-secret-key
+  ```
+- **Expected Response:**
+  ```json
+  {
+      "message": "New conversation created.",
+      "file_path": "/path/to/test-dialogue.yaml"
+  }
+  ```
 
 ---
 
@@ -108,25 +108,20 @@ Retrieves the history of the specified conversation.
 **Headers:**
 - `api_key`: Your API key.
 
-**Path Parameters:**
-- `dialogue_name`: The name of the conversation.
-
-**Query Parameters:**
-- `index` (optional): Index of the history to retrieve.
-
-**Request Example:**
-```bash
-curl -X GET http://127.0.0.1:5000/read-conversation/test-dialogue \
-     -H "api_key: <your-api-key>"
-```
-
-**Response Example:**
-```json
-{
-    "message": "Conversation history retrieved.",
-    "history": ["# Conversation history initialized"]
-}
-```
+**Postman Test Example:**
+- **Method:** `GET`
+- **URL:** `http://127.0.0.1:5000/read-conversation/test-dialogue`
+- **Headers:**
+  ```
+  api_key: my-secret-key
+  ```
+- **Expected Response:**
+  ```json
+  {
+      "message": "Conversation history retrieved.",
+      "history": ["# Conversation history initialized"]
+  }
+  ```
 
 ---
 
@@ -143,136 +138,30 @@ Adds content to the specified conversation.
 **Headers:**
 - `api_key`: Your API key.
 
-**Path Parameters:**
-- `dialogue_name`: The name of the conversation.
-
-**Request Body:**
-```json
-{
-    "content": {"user": "Hello", "assistant": "Hi!"},
-    "index": null
-}
-```
-
-**Request Example:**
-```bash
-curl -X POST http://127.0.0.1:5000/write-conversation/test-dialogue \
-     -H "api_key: <your-api-key>" \
-     -d '{"content": {"user": "Hello", "assistant": "Hi!"}, "index": null}'
-```
-
-**Response Example:**
-```json
-{
-    "message": "Content written to conversation."
-}
-```
+**Postman Test Example:**
+- **Method:** `POST`
+- **URL:** `http://127.0.0.1:5000/write-conversation/test-dialogue`
+- **Headers:**
+  ```
+  api_key: my-secret-key
+  ```
+- **Body (JSON):**
+  ```json
+  {
+      "content": {"user": "Hello", "assistant": "Hi!"},
+      "index": null
+  }
+  ```
+- **Expected Response:**
+  ```json
+  {
+      "message": "Content written to conversation."
+  }
+  ```
 
 ---
 
-## **6. Process Dialogue**
-
-**Endpoint:**
-```
-POST /process-dialogue/{dialogue_name}
-```
-
-**Description:**
-Processes the dialogue history with the loaded model.
-
-**Headers:**
-- `api_key`: Your API key.
-
-**Path Parameters:**
-- `dialogue_name`: The name of the conversation.
-
-**Request Example:**
-```bash
-curl -X POST http://127.0.0.1:5000/process-dialogue/test-dialogue \
-     -H "api_key: <your-api-key>"
-```
-
-**Response Example:**
-```json
-{
-    "message": "Dialogue processed with model."
-}
-```
-
----
-
-## **7. Generate Response**
-
-**Endpoint:**
-```
-POST /generate-response/{dialogue_name}
-```
-
-**Description:**
-Generates a model response for the specified input text.
-
-**Headers:**
-- `api_key`: Your API key.
-
-**Path Parameters:**
-- `dialogue_name`: The name of the conversation.
-
-**Request Body:**
-```json
-{
-    "input_text": "What is AI?"
-}
-```
-
-**Request Example:**
-```bash
-curl -X POST http://127.0.0.1:5000/generate-response/test-dialogue \
-     -H "api_key: <your-api-key>" \
-     -d '{"input_text": "What is AI?"}'
-```
-
-**Response Example:**
-```json
-{
-    "message": "Response generated and added to conversation."
-}
-```
-
----
-
-## **8. Summarize Conversation**
-
-**Endpoint:**
-```
-GET /summarize-conversation/{dialogue_name}
-```
-
-**Description:**
-Summarizes the entire conversation history.
-
-**Headers:**
-- `api_key`: Your API key.
-
-**Path Parameters:**
-- `dialogue_name`: The name of the conversation.
-
-**Request Example:**
-```bash
-curl -X GET http://127.0.0.1:5000/summarize-conversation/test-dialogue \
-     -H "api_key: <your-api-key>"
-```
-
-**Response Example:**
-```json
-{
-    "message": "Conversation summarized.",
-    "summary": "Summary of the conversation."
-}
-```
-
----
-
-## **9. Load Model**
+## **6. Load Model**
 
 **Endpoint:**
 ```
@@ -285,30 +174,29 @@ Loads the specified model.
 **Headers:**
 - `api_key`: Your API key.
 
-**Request Body:**
-```json
-{
-    "pip_name": "microsoft/Phi-3.5-mini-instruct"
-}
-```
-
-**Request Example:**
-```bash
-curl -X POST http://127.0.0.1:5000/load_model/ \
-     -H "api_key: <your-api-key>" \
-     -d '{"pip_name": "microsoft/Phi-3.5-mini-instruct"}'
-```
-
-**Response Example:**
-```json
-{
-    "message": "Model 'microsoft/Phi-3.5-mini-instruct' loaded successfully."
-}
-```
+**Postman Test Example:**
+- **Method:** `POST`
+- **URL:** `http://127.0.0.1:5000/load_model/`
+- **Headers:**
+  ```
+  api_key: my-secret-key
+  ```
+- **Body (JSON):**
+  ```json
+  {
+      "pip_name": "microsoft/Phi-3.5-mini-instruct"
+  }
+  ```
+- **Expected Response:**
+  ```json
+  {
+      "message": "Model 'microsoft/Phi-3.5-mini-instruct' loaded successfully."
+  }
+  ```
 
 ---
 
-## **10. Unload Model**
+## **7. Unload Model**
 
 **Endpoint:**
 ```
@@ -321,22 +209,23 @@ Unloads the currently loaded model.
 **Headers:**
 - `api_key`: Your API key.
 
-**Request Example:**
-```bash
-curl -X POST http://127.0.0.1:5000/unload_model/ \
-     -H "api_key: <your-api-key>"
-```
-
-**Response Example:**
-```json
-{
-    "message": "Model unloaded successfully."
-}
-```
+**Postman Test Example:**
+- **Method:** `POST`
+- **URL:** `http://127.0.0.1:5000/unload_model/`
+- **Headers:**
+  ```
+  api_key: my-secret-key
+  ```
+- **Expected Response:**
+  ```json
+  {
+      "message": "Model unloaded successfully."
+  }
+  ```
 
 ---
 
-## **11. Chat**
+## **8. Chat**
 
 **Endpoint:**
 ```
@@ -349,33 +238,32 @@ Starts a chat process in the background with the provided messages.
 **Headers:**
 - `api_key`: Your API key.
 
-**Request Body:**
-```json
-{
-    "messages": [
-        {"role": "system", "content": "You are a helpful assistant."},
-        {"role": "user", "content": "What is AI?"}
-    ]
-}
-```
-
-**Request Example:**
-```bash
-curl -X POST http://127.0.0.1:5000/chat/ \
-     -H "api_key: <your-api-key>" \
-     -d '{"messages": [{"role": "system", "content": "You are a helpful assistant."}, {"role": "user", "content": "What is AI?"}]}'
-```
-
-**Response Example:**
-```json
-{
-    "message": "Chat generation started in the background."
-}
-```
+**Postman Test Example:**
+- **Method:** `POST`
+- **URL:** `http://127.0.0.1:5000/chat/`
+- **Headers:**
+  ```
+  api_key: my-secret-key
+  ```
+- **Body (JSON):**
+  ```json
+  {
+      "messages": [
+          {"role": "system", "content": "You are a helpful assistant."},
+          {"role": "user", "content": "What is AI?"}
+      ]
+  }
+  ```
+- **Expected Response:**
+  ```json
+  {
+      "message": "Chat generation started in the background."
+  }
+  ```
 
 ---
 
-## **12. Chat Status**
+## **9. Chat Status**
 
 **Endpoint:**
 ```
@@ -388,38 +276,39 @@ Checks the status of the last chat request.
 **Headers:**
 - `api_key`: Your API key.
 
-**Request Example:**
-```bash
-curl -X GET http://127.0.0.1:5000/chat-status/ \
-     -H "api_key: <your-api-key>"
-```
-
-**Response Examples:**
-- **Processing:**
-  ```json
-  {
-      "status": "processing",
-      "response": null
-  }
+**Postman Test Example:**
+- **Method:** `GET`
+- **URL:** `http://127.0.0.1:5000/chat-status/`
+- **Headers:**
   ```
-- **Completed:**
-  ```json
-  {
-      "status": "completed",
-      "response": "Artificial Intelligence refers to..."
-  }
+  api_key: my-secret-key
   ```
-- **Error:**
-  ```json
-  {
-      "status": "error",
-      "response": "Error message here"
-  }
-  ```
+- **Expected Responses:**
+  - **Processing:**
+    ```json
+    {
+        "status": "processing",
+        "response": null
+    }
+    ```
+  - **Completed:**
+    ```json
+    {
+        "status": "completed",
+        "response": "Artificial Intelligence refers to..."
+    }
+    ```
+  - **Error:**
+    ```json
+    {
+        "status": "error",
+        "response": "Error message here"
+    }
+    ```
 
 ---
 
-## **13. Heartbeat**
+## **10. Heartbeat**
 
 **Endpoint:**
 ```
@@ -432,18 +321,19 @@ Checks if the backend is running.
 **Headers:**
 - `api_key`: Your API key.
 
-**Request Example:**
-```bash
-curl -X GET http://127.0.0.1:5000/heartbeat \
-     -H "api_key: <your-api-key>"
-```
-
-**Response Example:**
-```json
-{
-    "status": "alive",
-    "message": "Backend is running."
-}
-```
+**Postman Test Example:**
+- **Method:** `GET`
+- **URL:** `http://127.0.0.1:5000/heartbeat`
+- **Headers:**
+  ```
+  api_key: my-secret-key
+  ```
+- **Expected Response:**
+  ```json
+  {
+      "status": "alive",
+      "message": "Backend is running."
+  }
+  ```
 
 ---
