@@ -401,5 +401,43 @@ Checks if a model loading task is currently running.
     }
     ```
 
+## **13. Has Model**
+
+**Endpoint:**
+```
+GET /has_model/
+```
+
+**Description:**
+Checks if there is a currently loaded model in the backend. If a model is loaded, the response will return `true`. Otherwise, it will return `false`.
+
+**Headers:**
+- `api_key`: Your API key.
+
+**Postman Test Example:**
+- **Method:** `GET`
+- **URL:** `http://127.0.0.1:5000/has_model/`
+- **Headers:**
+  ```
+  api_key: my-secret-key
+  ```
+- **Expected Responses:**
+  - **Model Loaded:**
+    ```json
+    {
+        "has_model": true
+    }
+    ```
+  - **No Model Loaded:**
+    ```json
+    {
+        "has_model": false
+    }
+    ```
+
+**Usage Example:**
+This endpoint can be used to verify if a model is ready to process requests before sending any chat or other API calls that depend on a loaded model.
+
+
 ---
 

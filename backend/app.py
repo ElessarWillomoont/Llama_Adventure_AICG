@@ -197,6 +197,12 @@ def chat_generation_status(api_key: str = Header(...)):
     validate_api_key(api_key)
     return {"chat_generating": loading_status["chat_generating"]}
 
+@app.get("/has_model/")
+def has_model(api_key: str = Header(...)):
+    validate_api_key(api_key)
+    global model_pipeline
+    return {"has_model": model_pipeline is not None}
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("app:app", host="0.0.0.0", port=5000, reload=True)

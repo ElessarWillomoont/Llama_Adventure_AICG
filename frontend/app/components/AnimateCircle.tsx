@@ -89,6 +89,21 @@ export default function AnimatedCircle() {
 
       const chatGenStatusData = await chatGenStatusResponse.json();
       setModelGenerating(chatGenStatusData.chat_generating);
+
+      // Check if a model is loaded
+      const hasModelResponse = await fetch(`${backend_url}/has_model/`, {
+        headers: {
+          "Content-Type": "application/json",
+          "api-key": api_key,
+        },
+      });
+
+      if (!hasModelResponse.ok) {
+        throw new Error(`Has Model API call failed: ${hasModelResponse.statusText}`);
+      }
+
+      const hasModelData = await hasModelResponse.json();
+      setModelLoaded(hasModelData.has_model);
     } catch (err) {
       if (err instanceof Error) {
         log(`Error: ${err.message}`);
