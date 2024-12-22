@@ -74,6 +74,18 @@ This setup is ideal for users with high-performance computers, real-time require
 
 4. Access the application through the Node.js server for the frontend experience.
 
+## Frontend
+
+Using a Next.js project as the frontend facilitates rapid development of a functional prototype.
+
+### Development Mode
+
+The application includes a development mode controlled by the environment variable `GAME_IS_IN_DEV_MODE`. When set to `"true"`, a toggle button appears at the top-right corner of the page. This button allows users to enable or disable development mode, which activates or hides logs, context, and other non-essential information.
+
+### Animation Heartbeat
+
+The frontend continuously monitors the backend's `heartbeat` API. If communication fails or there is a timeout exceeding 10 seconds, it indicates that the backend might have crashed or disconnected. This feature helps users identify whether the backend is still processing intensive tasks, such as large model generation, or if it requires intervention to address a crash or disconnection.
+
 ## Discussion
 
 ### Why use Docker with bulky images?

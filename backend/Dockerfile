@@ -17,4 +17,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 EXPOSE 5000
 
 # Command to run the Python script for Uvicorn
-CMD ["python", "start_uvicorn.py"]
+CMD ["python", "app.py"]
