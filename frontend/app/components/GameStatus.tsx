@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useGlobalState } from "../contexts/GlobalStateContext";
 import { extractSpecialContent, coStarToMessage, loadConfig, fetchGameResponse } from "../utils/gameStatus";
-import { coStar_Status1, coStar_Status2_West, coStar_Status2_South } from "../utils/coStar";
+import { coStar_Status1, coStar_Status2_West, coStar_Status2_South, coStar_Status2_North } from "../utils/coStar";
 
 const GameStatus: React.FC = () => {
   const {
@@ -58,6 +58,7 @@ const GameStatus: React.FC = () => {
     if (gameStep === "GameStatus.1") {
       switch (choiceOfGame) {
         case 'North':
+          setGameStep("GameStatus.2.north");
           console.log('enter N');
           break;
         case 'South':
@@ -170,6 +171,47 @@ useEffect(() => {
       coStar_Status2_South.tone,
       coStar_Status2_South.audience,
       coStar_Status2_South.responseFormat
+    );
+
+    setSystemMessageCoStar(newSystemMessage);
+  }
+}, [gameStep, setSystemMessageCoStar]);
+
+
+// for the north
+
+useEffect(() => {
+  if (gameStep === "GameStatus.2.north") {
+    switch (choiceOfGame) {
+      case 'Dead':
+        console.log('Player Dead');
+
+        setGameStatus((prevStatus: Record<string, any>) => ({
+          ...prevStatus,
+          player: {
+            ...prevStatus.player,
+            health: 0,
+          },
+        }));
+        break;
+      
+      default:
+        console.log('No valid choice');
+    }
+  }
+}, [gameStep, choiceOfGame]);
+
+useEffect(() => {
+  if (gameStep === "GameStatus.2.north") {
+    setDialogueName("chat_temp_2");
+
+    const newSystemMessage = coStarToMessage(
+      coStar_Status2_North.context,
+      coStar_Status2_North.objective,
+      coStar_Status2_North.style,
+      coStar_Status2_North.tone,
+      coStar_Status2_North.audience,
+      coStar_Status2_North.responseFormat
     );
 
     setSystemMessageCoStar(newSystemMessage);

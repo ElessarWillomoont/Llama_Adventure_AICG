@@ -26,6 +26,12 @@ The system can correctly recognize user inputs and respond accordingly through a
 - If players choose to spend the night here, they are ambushed by a gang of bandits and killed.
 - This event highlights the dangers of trusting seemingly safe locations and encourages strategic planning.
 
+##### Act II: Northern Factory Ruins
+
+- Players are shot and killed by a sniper upon entering this area.
+- This encounter emphasizes the importance of scouting and caution in hostile environments.
+
+
 
 
 
