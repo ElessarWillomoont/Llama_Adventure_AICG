@@ -25,7 +25,6 @@ export default function DialogueBoard() {
 
   const [responseText, setResponseText] = useState<string | null>(null);
   const previousModelGenerating = useRef<boolean>(modelGenerating);
-//   const dialogueName = "chating_history";
 
   useEffect(() => {
     const fetchResponse = async () => {
@@ -57,7 +56,11 @@ export default function DialogueBoard() {
           } else {
             const lastAssistantResponse = data.response
               .filter((item: { role: string; content: string }) => item.role === "assistant")
-              .map((item: { content: string }) => item.content)
+              .map((item: { content: string }) => {
+                const text = item.content;
+                const filteredText = text.replace(/<\/\/.*?\/\/>/, "");
+                return filteredText;
+              })
               .pop();
             setResponseText(lastAssistantResponse || "No assistant response available.");
           }
@@ -131,7 +134,7 @@ export default function DialogueBoard() {
           textAlign: "left", // Align text to the left
         }}
       >
-        {responseText || "Waiting for response..."}
+        {responseText || "Say Hi maybe?"}
       </div>
     </div>
   );

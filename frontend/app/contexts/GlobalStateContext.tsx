@@ -87,6 +87,13 @@ interface GlobalStateType {
    */
   responding: boolean;
   setResponding: (value: boolean) => void;
+
+  /**
+   * Current game scene identifier
+   * Default: ""
+   */
+  gameScene: string;
+  setGameScene: (value: string) => void;
 }
 
 // Create the context
@@ -123,6 +130,7 @@ export const GlobalStateProvider = ({ children }: { children: ReactNode }) => {
   });
   const [sendKeyPressed, setSendKeyPressed] = useState<boolean>(false); // Indicates whether the send key is pressed, default false
   const [responding, setResponding] = useState<boolean>(false); // Indicates whether the system is responding, default false
+  const [gameScene, setGameScene] = useState<string>(""); // Current game scene identifier, default ""
 
   return (
     <GlobalStateContext.Provider
@@ -151,6 +159,8 @@ export const GlobalStateProvider = ({ children }: { children: ReactNode }) => {
         setSendKeyPressed,
         responding,
         setResponding,
+        gameScene,
+        setGameScene,
       }}
     >
       {children}
