@@ -157,6 +157,25 @@ For the current `phi-3.5-mini`, the model weights are approximately 5GB. You can
 
 Yes, both the frontend and backend images exceed 2GB, with the backend image approaching 30GB after loading the model. This is due to Node.js and PyTorch providing extensive tools for various development tasks, most of which are unnecessary for this specific task. In the future, I plan to optimize this or transition the architecture to frameworks like WebLLM to reduce the overall footprint.
 
+### 5. Unexpected Model Outputs
+
+Sometimes the model unexpectedly generates unconventional tags. Usually, once a reply in the chat history produces such an anomalous tag, it continues to do so. This is likely caused by insufficiently strict prompt design. However, due to GPU memory limitations, creating a longer and more detailed prompt is not currently feasible.
+
+**Temporary Solution:**
+
+Delete all YAML records in the backend `db` directory and restart the game.
+
+### 6. Occasional Memory Overflow
+
+Most of the time, this is caused by the large parameter size of the model and excessively long prompts. Currently, there are no efficient solutions. Future plans include using quantized models, adopting more efficient frameworks, or switching to smaller models.
+
+**Temporary Solutions:**
+
+- Adjust the `max_new_tokens` parameter in the backend's `config.yaml`. Note that this might truncate outputs and cause tag loss.
+- Modify the `max_history_conversation` parameter in `chatAPIInteraction.ts` within the `utils` directory of the frontend. (Future updates will integrate this parameter into the frontend `config.yaml` for easier configuration.)
+
+
+
 
 
 ## Frontend
