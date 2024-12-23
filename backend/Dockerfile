@@ -1,5 +1,5 @@
 # Use the specified PyTorch base image with CUDA 12.4 and cuDNN 9
-FROM pytorch/pytorch:2.5.1-cuda12.4-cudnn9-devel
+FROM pytorch/pytorch:2.5.1-cuda12.4-cudnn9-runtime
 
 # Set the working directory in the container
 WORKDIR /app
