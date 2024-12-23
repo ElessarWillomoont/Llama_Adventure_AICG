@@ -1,5 +1,8 @@
 import yaml from "js-yaml";
 
+// Global variable for maximum history conversations
+const max_history_conversation = 3; // Set your desired maximum history count here
+
 // Function to fetch config
 export async function fetchConfig() {
   try {
@@ -39,14 +42,22 @@ export async function formalizeInput(
 
     const messages = [{ role: "system", content: systemMessage }];
     const histories = historyData.history.filter((item: any) => typeof item === "object");
+
+    // Extract only user and assistant messages
+    const userAndAssistantMessages: { role: string; content: string }[] = [];
     histories.forEach((history: any) => {
       history.content.forEach((message: { role: string; content: string }) => {
         if (message.role === "user" || message.role === "assistant") {
-          messages.push({ role: message.role, content: message.content });
+          userAndAssistantMessages.push({ role: message.role, content: message.content });
         }
       });
     });
 
+    // Limit history to the last max_history_conversation pairs
+    const limitedMessages = userAndAssistantMessages.slice(-max_history_conversation * 2);
+    messages.push(...limitedMessages);
+
+    // Add current user input
     messages.push({ role: "user", content: input });
 
     console.log("Formatted Messages:", messages);

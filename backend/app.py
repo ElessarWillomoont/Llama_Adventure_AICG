@@ -116,19 +116,61 @@ from fastapi import BackgroundTasks
 # A placeholder for storing the last chat response (for simplicity)
 last_response = {"status": "processing", "response": None}
 
+import torch
+import logging
+
+# Initialize logging
+logging.basicConfig(level=logging.INFO)
+
+# Function to monitor GPU memory usage
+def log_memory_usage(tag="Memory Usage"):
+    if torch.cuda.is_available():
+        allocated = torch.cuda.memory_allocated() / (1024 * 1024)
+        reserved = torch.cuda.memory_reserved() / (1024 * 1024)
+        logging.info(f"[{tag}] Allocated: {allocated:.2f} MB, Reserved: {reserved:.2f} MB")
+    else:
+        logging.info("CUDA not available. Cannot log memory usage.")
+
+# Function to check for model consistency
+def log_model_instance_id(model_pipeline, tag="Model Instance"):
+    logging.info(f"[{tag}] Model pipeline ID: {id(model_pipeline)}")
+
+# Updated perform_chat_task function
 def perform_chat_task(messages, generation_args):
-    """Perform the chat generation task in the background."""
     global model_pipeline, last_response, loading_status
     try:
+        # Log memory usage before starting the task
+        log_memory_usage(tag="Before Chat Generation")
+
+        # Log the model instance ID
+        log_model_instance_id(model_pipeline, tag="Before Chat Generation")
+
         loading_status["chat_generating"] = True
         output = model_pipeline(messages, **generation_args)
+
+        # Log memory usage after generating the response
+        log_memory_usage(tag="After Chat Generation")
+
+        # Store the response
         last_response["status"] = "completed"
         last_response["response"] = output[0]["generated_text"]
-        loading_status["chat_generating"] = False
     except Exception as e:
         last_response["status"] = "error"
         last_response["response"] = str(e)
+        logging.error(f"Error during chat generation: {e}")
+    finally:
+        # Log memory usage after completing the task
+        log_memory_usage(tag="Task Completed")
+
+        # Clear GPU cache to free unused memory
+        torch.cuda.empty_cache()
+
+        # Log memory usage after clearing the cache
+        log_memory_usage(tag="After Clearing Cache")
+
+        # Set the status to false
         loading_status["chat_generating"] = False
+
 
 def perform_load_task():
     """Perform the model loading task in the background."""
