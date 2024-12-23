@@ -58,7 +58,7 @@ export default function DialogueBoard() {
               .filter((item: { role: string; content: string }) => item.role === "assistant")
               .map((item: { content: string }) => {
                 const text = item.content;
-                const filteredText = text.replace(/<\/\/.*?\/\/>/, "");
+                const filteredText = text.replace(/<\/\/.*?\/\/>/g, "");
                 return filteredText;
               })
               .pop();
