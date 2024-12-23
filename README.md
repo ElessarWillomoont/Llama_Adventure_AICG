@@ -13,10 +13,19 @@ The system can correctly recognize user inputs and respond accordingly through a
 #### Completed Sections:
 
 ##### Starting Point
-- Each of the four directions has a corresponding description.
+
+- Each of the four directions has a unique description, providing players with an immersive exploration experience.
 
 ##### Act II: Western Fields
-- Here, the player encounters a landmine and is killed, causing their health to drop to 0.
+
+- Players encounter a hidden landmine in this area. Triggering it results in instant death, reducing their health to 0.
+- This section serves to introduce environmental hazards and encourages players to think critically about their choices and surroundings.
+
+##### Act II: Southern Shelter
+
+- If players choose to spend the night here, they are ambushed by a gang of bandits and killed.
+- This event highlights the dangers of trusting seemingly safe locations and encourages strategic planning.
+
 
 
 

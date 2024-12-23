@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useGlobalState } from "../contexts/GlobalStateContext";
 import { extractSpecialContent, coStarToMessage, loadConfig, fetchGameResponse } from "../utils/gameStatus";
-import { coStar_Status1, coStar_Status2_West } from "../utils/coStar";
+import { coStar_Status1, coStar_Status2_West, coStar_Status2_South } from "../utils/coStar";
 
 const GameStatus: React.FC = () => {
   const {
@@ -62,6 +62,7 @@ const GameStatus: React.FC = () => {
           break;
         case 'South':
           console.log('enter S');
+          setGameStep("GameStatus.2.south");
           break;
         case 'East':
           console.log('enter E');
@@ -95,6 +96,8 @@ const GameStatus: React.FC = () => {
 
 // for game status 2
 
+
+// for the west
 useEffect(() => {
   if (gameStep === "GameStatus.2.west") {
     switch (choiceOfGame) {
@@ -127,6 +130,46 @@ useEffect(() => {
       coStar_Status2_West.tone,
       coStar_Status2_West.audience,
       coStar_Status2_West.responseFormat
+    );
+
+    setSystemMessageCoStar(newSystemMessage);
+  }
+}, [gameStep, setSystemMessageCoStar]);
+
+// for the south
+
+useEffect(() => {
+  if (gameStep === "GameStatus.2.south") {
+    switch (choiceOfGame) {
+      case 'Dead':
+        console.log('Player Dead');
+
+        setGameStatus((prevStatus: Record<string, any>) => ({
+          ...prevStatus,
+          player: {
+            ...prevStatus.player,
+            health: 0,
+          },
+        }));
+        break;
+      
+      default:
+        console.log('No valid choice');
+    }
+  }
+}, [gameStep, choiceOfGame]);
+
+useEffect(() => {
+  if (gameStep === "GameStatus.2.south") {
+    setDialogueName("chat_temp_2");
+
+    const newSystemMessage = coStarToMessage(
+      coStar_Status2_South.context,
+      coStar_Status2_South.objective,
+      coStar_Status2_South.style,
+      coStar_Status2_South.tone,
+      coStar_Status2_South.audience,
+      coStar_Status2_South.responseFormat
     );
 
     setSystemMessageCoStar(newSystemMessage);
