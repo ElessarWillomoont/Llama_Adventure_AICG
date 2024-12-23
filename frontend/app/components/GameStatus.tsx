@@ -17,10 +17,10 @@ const coStarToMessage = (
 
 const extractSpecialContent = (text: string): string => {
   // 匹配所有 <// ... //> 的内容
-  const matches = text.match(/<\/\/.*?\/\/>/g);
+  const matches = text.match(/<\/\/.*?\/\//g);
   if (matches && matches.length > 0) {
     // 对第一个匹配的内容进行修剪
-    const trimmedChoice = matches[0].replace(/<\/\/Choice:\s*|\s*\/\/>/g, '').trim();
+    const trimmedChoice = matches[0].replace(/<\/\/Choice:\s*|\s*\/\//g, '').trim();
     console.log(`Extracted Choice: ${trimmedChoice}`);
     return trimmedChoice;
   } else {
@@ -28,7 +28,6 @@ const extractSpecialContent = (text: string): string => {
     return ''; // 未找到匹配内容时返回空字符串
   }
 };
-
 
 const GameStatus: React.FC = () => {
   const {
@@ -57,7 +56,7 @@ const GameStatus: React.FC = () => {
         const config = yaml.load(configText) as { backend_url: string; api_key: string };
 
         const { backend_url, api_key } = config;
-        let chioce = ''
+
         const response = await fetch(`${backend_url}/chat-get-response/`, {
           headers: {
             "Content-Type": "application/json",
@@ -79,33 +78,9 @@ const GameStatus: React.FC = () => {
           console.log(lastAssistantResponse || "No assistant response available."); // Log to console
 
           if (lastAssistantResponse) {
-            chioce = extractSpecialContent(lastAssistantResponse); // Extract and log special content
+            const choice = extractSpecialContent(lastAssistantResponse); // Extract and log special content
+            console.log(`Extracted Choice: ${choice}`);
           }
-          console.log(`get the choice of : ${chioce}`)
-          // Save the response to the backend
-          const saveResponse = async () => {
-            try {
-              const saveResponse = await fetch(`${backend_url}/write-conversation/${dialogueName}`, {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                  "api-key": api_key,
-                },
-                body: JSON.stringify({ content: data.response, index: null }),
-              });
-
-              if (!saveResponse.ok) {
-                throw new Error(`Failed to save conversation: ${saveResponse.statusText}`);
-              }
-
-              const saveData = await saveResponse.json();
-              console.log(saveData.message);
-            } catch (error) {
-              console.error("Error saving conversation:", error);
-            }
-          };
-
-          saveResponse();
         } else {
           console.error("Error: " + data.response);
         }
@@ -115,7 +90,7 @@ const GameStatus: React.FC = () => {
     };
 
     if (previousModelGenerating.current && !modelGenerating) {
-      console.log("Generating completed");
+      console.log("Generating completed in GameStatus");
       fetchResponse();
     }
     previousModelGenerating.current = modelGenerating;

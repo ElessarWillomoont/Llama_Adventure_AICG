@@ -4,6 +4,7 @@ import yaml
 from models.util import init_db_dir, new_conversation, read_conversation, write_conversation
 from models.model_new import load_model, unload_model
 from pydantic import BaseModel
+import logging
 
 # Load configuration from config.yaml
 with open("config.yaml", "r") as file:
@@ -22,6 +23,21 @@ app.add_middleware(
     allow_methods=["*"],  # Allow all HTTP methods
     allow_headers=["*"],  # Allow all HTTP headers
 )
+
+# Set up logging filter
+class SuppressAPILoggingFilter(logging.Filter):
+    def filter(self, record):
+        ignored_paths = [
+            "/heartbeat",
+            "/load-status/",
+            "/chat-generation-status/",
+            "/has_model/"
+        ]
+        # Ignore log messages that match the ignored paths
+        return not any(path in record.getMessage() for path in ignored_paths)
+
+# Apply the logging filter
+logging.getLogger("uvicorn.access").addFilter(SuppressAPILoggingFilter())
 
 # Global variables for the model pipeline and device
 model_pipeline = None
