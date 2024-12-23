@@ -31,9 +31,9 @@ The system can correctly recognize user inputs and respond accordingly through a
 - Players are shot and killed by a sniper upon entering this area.
 - This encounter emphasizes the importance of scouting and caution in hostile environments.
 
+##### Act II: Eastern Abandoned City
 
-
-
+- Players can choose to explore either the residential building ruins or the research facility ruins in this area.
 
 ## How to Run
 

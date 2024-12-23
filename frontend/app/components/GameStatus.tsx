@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useGlobalState } from "../contexts/GlobalStateContext";
 import { extractSpecialContent, coStarToMessage, loadConfig, fetchGameResponse } from "../utils/gameStatus";
-import { coStar_Status1, coStar_Status2_West, coStar_Status2_South, coStar_Status2_North } from "../utils/coStar";
+import { coStar_Status1, coStar_Status2_West, coStar_Status2_South, coStar_Status2_North, coStar_Status2_East } from "../utils/coStar";
 
 const GameStatus: React.FC = () => {
   const {
@@ -17,16 +17,16 @@ const GameStatus: React.FC = () => {
     dialogueName,
     setDialogueName,
     systemMessageCoStar,
-    setSystemMessageCoStar, // 新增
+    setSystemMessageCoStar, 
     gameStatus,
     setGameStatus,
-    sendKeyPressed, // 新增
-    responding, // 新增
+    sendKeyPressed, 
+    responding, 
   } = useGlobalState();
 
   const previousModelGenerating = useRef<boolean>(modelGenerating);
-  const [gameStep, setGameStep] = useState("GameStatus.1"); // 替换全局变量 game_step
-  const [choiceOfGame, setChoiceOfGame] = useState(''); // 替换全局变量 choice_of_game
+  const [gameStep, setGameStep] = useState("GameStatus.1"); 
+  const [choiceOfGame, setChoiceOfGame] = useState(''); 
 
   useEffect(() => {
     const fetchResponse = async () => {
@@ -66,6 +66,7 @@ const GameStatus: React.FC = () => {
           setGameStep("GameStatus.2.south");
           break;
         case 'East':
+          setGameStep("GameStatus.2.east");
           console.log('enter E');
           break;
         case 'West':
@@ -218,16 +219,51 @@ useEffect(() => {
   }
 }, [gameStep, setSystemMessageCoStar]);
 
+
+// for the east
+
+useEffect(() => {
+  if (gameStep === "GameStatus.2.east") {
+    switch (choiceOfGame) {
+      case 'Left':
+        console.log('enter L');
+        break;
+      case 'Right':
+        console.log('enter R');
+        break;
+      default:
+        console.log('No valid choice');
+    }
+  }
+}, [gameStep, choiceOfGame]);
+
+useEffect(() => {
+  if (gameStep === "GameStatus.2.east") {
+    setDialogueName("chat_temp_2");
+
+    const newSystemMessage = coStarToMessage(
+      coStar_Status2_East.context,
+      coStar_Status2_East.objective,
+      coStar_Status2_East.style,
+      coStar_Status2_East.tone,
+      coStar_Status2_East.audience,
+      coStar_Status2_East.responseFormat
+    );
+
+    setSystemMessageCoStar(newSystemMessage);
+  }
+}, [gameStep, setSystemMessageCoStar]);
+
   return (
     <div>
       <div
         style={{
-          position: "absolute", // 确保可以相对于父组件定位
-          top: "1%", // 上方显示当前状态
+          position: "absolute", 
+          top: "1%", 
           left: "1%",
-          backgroundColor: isInDevMode ? "#e0ffe0" : "inherit", // 绿色背景指示 Dev Mode
+          backgroundColor: isInDevMode ? "#e0ffe0" : "inherit", 
           fontWeight: "bold",
-          color: "green", // 当前状态字体为绿色
+          color: "green", 
           padding: "5px"
         }}
       >
@@ -235,19 +271,19 @@ useEffect(() => {
       </div>
       <div
         style={{
-          position: "absolute", // 确保可以相对于父组件定位
+          position: "absolute", 
           top: "3%",
           bottom: "15%",
           left: "1%",
           right: "71%",
-          backgroundColor: "#f0f0f0", // 设置背景色
-          border: "2px solid #ccc", // 边框样式
-          borderRadius: "8px", // 圆角边框
-          boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)", // 添加阴影
-          overflowY: "auto", // 启用垂直滚动条
-          padding: "10px", // 添加内边距
-          whiteSpace: "pre-wrap", // 自动换行
-          wordWrap: "break-word", // 长单词折行
+          backgroundColor: "#f0f0f0", 
+          border: "2px solid #ccc", 
+          borderRadius: "8px", 
+          boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)", 
+          overflowY: "auto", 
+          padding: "10px", 
+          whiteSpace: "pre-wrap", 
+          wordWrap: "break-word", 
         }}
       >
         {isInDevMode ? (
