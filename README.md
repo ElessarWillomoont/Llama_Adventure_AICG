@@ -35,6 +35,18 @@ The system can correctly recognize user inputs and respond accordingly through a
 
 - Players can choose to explore either the residential building ruins or the research facility ruins in this area.
 
+##### Act III: Left Residential Building
+
+- Players are killed by a blizzard in this area.
+
+##### Act III: Right Research Facility Ruins
+
+- Players discover an Old World fusion reactor here, gaining 100 gold.
+
+##### Winning Path
+
+- Start by heading to the city, then proceed to the research facility ruins within the city.
+
 ## How to Run
 
 ### Using Docker (Recommended for beginners)
@@ -232,6 +244,6 @@ Quantization in Transformers is not as straightforward as in the original PyTorc
 7. Create initialization buttons and interaction logic in the frontend for communication (**Completed**)
 8. Develop a frontend-backend structure capable of single-turn dialogue (**Completed**)
 9. Enhance to support multi-turn dialogues with context-awareness (**Completed**)
-10. Add game logic and character state storage (**Not Completed**)
-11. Enable game-character-based dialogue by generating context for the model (**Not Completed**)
+10. Add game logic and character state storage (**Completed**)
+11. Enable game-character-based dialogue by generating context for the model (**Completed**)
 12. Add more NPC characters (**Not Completed**)

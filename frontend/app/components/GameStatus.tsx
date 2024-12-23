@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useGlobalState } from "../contexts/GlobalStateContext";
 import { extractSpecialContent, coStarToMessage, loadConfig, fetchGameResponse } from "../utils/gameStatus";
-import { coStar_Status1, coStar_Status2_West, coStar_Status2_South, coStar_Status2_North, coStar_Status2_East } from "../utils/coStar";
+import { coStar_Status1, coStar_Status2_West, coStar_Status2_South, coStar_Status2_North, coStar_Status2_East, coStar_Status3_Left, coStar_Status3_Right } from "../utils/coStar";
 
 const GameStatus: React.FC = () => {
   const {
@@ -226,9 +226,11 @@ useEffect(() => {
   if (gameStep === "GameStatus.2.east") {
     switch (choiceOfGame) {
       case 'Left':
+        setGameStep("GameStatus.3.left");
         console.log('enter L');
         break;
       case 'Right':
+        setGameStep("GameStatus.3.right");
         console.log('enter R');
         break;
       default:
@@ -253,6 +255,90 @@ useEffect(() => {
     setSystemMessageCoStar(newSystemMessage);
   }
 }, [gameStep, setSystemMessageCoStar]);
+
+// for the Act III
+
+// right
+
+useEffect(() => {
+  if (gameStep === "GameStatus.3.right") {
+    switch (choiceOfGame) {
+      case 'Gain':
+        console.log('Player Gain');
+
+        setGameStatus((prevStatus: Record<string, any>) => ({
+          ...prevStatus,
+          player: {
+            ...prevStatus.player,
+            money: 100,
+          },
+        }));
+        break;
+      
+      default:
+        console.log('No valid choice');
+    }
+  }
+}, [gameStep, choiceOfGame]);
+
+useEffect(() => {
+  if (gameStep === "GameStatus.3.right") {
+    setDialogueName("chat_temp_3");
+
+    const newSystemMessage = coStarToMessage(
+      coStar_Status3_Right.context,
+      coStar_Status3_Right.objective,
+      coStar_Status3_Right.style,
+      coStar_Status3_Right.tone,
+      coStar_Status3_Right.audience,
+      coStar_Status3_Right.responseFormat
+    );
+
+    setSystemMessageCoStar(newSystemMessage);
+  }
+}, [gameStep, setSystemMessageCoStar]);
+
+
+// left
+
+useEffect(() => {
+  if (gameStep === "GameStatus.3.left") {
+    switch (choiceOfGame) {
+      case 'Dead':
+        console.log('Player Dead');
+
+        setGameStatus((prevStatus: Record<string, any>) => ({
+          ...prevStatus,
+          player: {
+            ...prevStatus.player,
+            health: 0,
+          },
+        }));
+        break;
+      
+      default:
+        console.log('No valid choice');
+    }
+  }
+}, [gameStep, choiceOfGame]);
+
+useEffect(() => {
+  if (gameStep === "GameStatus.3.left") {
+    setDialogueName("chat_temp_3");
+
+    const newSystemMessage = coStarToMessage(
+      coStar_Status3_Left.context,
+      coStar_Status3_Left.objective,
+      coStar_Status3_Left.style,
+      coStar_Status3_Left.tone,
+      coStar_Status3_Left.audience,
+      coStar_Status3_Left.responseFormat
+    );
+
+    setSystemMessageCoStar(newSystemMessage);
+  }
+}, [gameStep, setSystemMessageCoStar]);
+
 
   return (
     <div>
